@@ -29,4 +29,4 @@ O padrão de mensagens de commit utilizado é inspirado no [Conventional Commits
 
 | Versão | Data | Descrição | 
 | :------: | :----------: | :-----------: |
-| `1.0` | 09/05/2025 | Criação do documento de Padrão de Contribuição |
+| `1.0` | 09/05/2025 | Criação do documento do Padrão de Contribuição |
