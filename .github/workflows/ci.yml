@@ -26,4 +26,5 @@ jobs:
 
     - name: Rodar testes
       run: |
+        cd src
         pytest
