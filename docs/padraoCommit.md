@@ -19,7 +19,7 @@ O padrão de mensagens de commit utilizado é inspirado no [Conventional Commits
 
 `feat(docs padraoCommit): adiciona seção de padrão de commit`
 
-`fix(docs): corrige link quebrado no README`
+`fix(docs README): corrige link quebrado no README`
 
 `feat(tests): adiciona testes para autenticação`
 
