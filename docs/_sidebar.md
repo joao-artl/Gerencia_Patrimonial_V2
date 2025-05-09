@@ -1,2 +1,3 @@
 * [Home](/)
-* [Introdução](padraoCommit.md)
+* [Padrão de Contribuição](./padraoCommit.md)
+
