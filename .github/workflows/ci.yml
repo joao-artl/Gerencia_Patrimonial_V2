@@ -7,24 +7,35 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  test_and_validate_app:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout do repositório
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4 
 
-    - name: Configurar Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.12.3'
+    - name: Construir imagens Docker
+      run: docker-compose build
 
-    - name: Instalar dependências
+    - name: Rodar testes com Docker Compose
+      run: docker-compose run --rm tests
+
+    - name: Verificar inicialização e integridade da aplicação web
+      if: success()
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        echo "Iniciando o serviço 'db'"
+        docker-compose up -d db 
+        echo "Aguardando o serviço 'db' ficar pronto..."
+        echo "Verificando se o serviço 'web' pode iniciar, aplicar migrações e passar no Django check..."
+        docker-compose run --rm web \
+          sh -c "echo 'Esperando pelo serviço db na porta 5432...' && \
+                 while ! nc -z db 5432; do sleep 1; done && \
+                 echo 'Serviço db está pronto.' && \
+                 echo 'Aplicando migrações no banco de dados principal...' && \
+                 python /app/manage.py migrate && \
+                 echo 'Executando Django system check (--deploy)...' && \
+                 python /app/manage.py check --deploy"
 
-    #- name: Rodar testes
-    #  run: |
-    #    cd src
-    #    pytest
+    - name: Parar e remover contêineres e volumes
+      if: always() 
+      run: docker-compose down -v --remove-orphans
