@@ -12,22 +12,21 @@ jobs:
 
     steps:
     - name: Checkout do repositório
-      uses: actions/checkout@v4 
+      uses: actions/checkout@v4
 
     - name: Construir imagens Docker
-      run: docker-compose build
+      run: docker compose build
 
     - name: Rodar testes com Docker Compose
-      run: docker-compose run --rm tests
+      run: docker compose run --rm tests 
 
-    - name: Verificar inicialização e integridade da aplicação web
+    - name: Verificar inicialização da aplicação web
       if: success()
       run: |
         echo "Iniciando o serviço 'db'"
-        docker-compose up -d db 
-        echo "Aguardando o serviço 'db' ficar pronto..."
-        echo "Verificando se o serviço 'web' pode iniciar, aplicar migrações e passar no Django check..."
-        docker-compose run --rm web \
+        docker compose up -d db 
+        echo "Verificando se o serviço 'web' pode aplicar migrações e passar no system check..."
+        docker compose run --rm web \ 
           sh -c "echo 'Esperando pelo serviço db na porta 5432...' && \
                  while ! nc -z db 5432; do sleep 1; done && \
                  echo 'Serviço db está pronto.' && \
@@ -36,6 +35,6 @@ jobs:
                  echo 'Executando Django system check (--deploy)...' && \
                  python /app/manage.py check --deploy"
 
-    - name: Parar e remover contêineres e volumes
-      if: always() 
-      run: docker-compose down -v --remove-orphans
+    - name: Parar e remover contêineres, redes e volumes
+      if: always()
+      run: docker compose down -v --remove-orphans 
