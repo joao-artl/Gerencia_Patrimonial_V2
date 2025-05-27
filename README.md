@@ -20,3 +20,6 @@ Além disso é possivel executar alguns comandos,
 *Para rodar os testes:*
 
 ```docker-compose exec web python manage.py test```
+
+*ou:*
+```docker-compose run --rm tests```

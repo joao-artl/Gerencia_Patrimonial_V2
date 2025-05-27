@@ -15,12 +15,28 @@ services:
       timeout: 5s
       retries: 5
 
+  db_test:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test_admin
+      POSTGRES_PASSWORD: test_admin
+      POSTGRES_DB: test_gerenciapatrimonio
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_admin -d test_gerenciapatrimonio"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     build: .
     command: >
-      sh -c "while ! nc -z db 5432; do sleep 1; done &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+      sh -c "echo 'Waiting for production database...' &&
+             while ! nc -z db 5432; do sleep 1; done &&
+             echo 'Production database ready.' &&
+             echo 'Running migrations...' &&
+             python /app/manage.py migrate &&
+             echo 'Starting server...' &&
+             python /app/manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./src:/app
     ports:
@@ -35,6 +51,43 @@ services:
       - DB_NAME=gerenciapatrimonio
       - DB_USER=admin
       - DB_PASSWORD=admin
+      - TEST_DB_HOST=db_test
+      - TEST_DB_PORT=5432
+      - TEST_DB_NAME=test_gerenciapatrimonio
+      - TEST_DB_USER=test_admin
+      - TEST_DB_PASSWORD=test_admin
+      - DJANGO_SETTINGS_MODULE=gerencia_patrimonio.settings
+      - PYTHONUNBUFFERED=1
+
+  tests:
+    build: .
+    command: >
+      sh -c "echo 'Waiting for test database...' &&
+             while ! nc -z db_test 5432; do sleep 1; done &&
+             echo 'Test database ready.' &&
+             echo 'Running tests...' &&
+             python /app/manage.py test"
+    volumes:
+      - ./src:/app
+    depends_on:
+      db_test:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgres://admin:admin@db:5432/gerenciapatrimonio
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=gerenciapatrimonio
+      - DB_USER=admin
+      - DB_PASSWORD=admin
+      - TEST_DB_HOST=db_test
+      - TEST_DB_PORT=5432
+      - TEST_DB_NAME=test_gerenciapatrimonio
+      - TEST_DB_USER=test_admin
+      - TEST_DB_PASSWORD=test_admin
+      - DJANGO_SETTINGS_MODULE=gerencia_patrimonio.settings
+      - PYTHONUNBUFFERED=1
 
 volumes:
   postgres_data:

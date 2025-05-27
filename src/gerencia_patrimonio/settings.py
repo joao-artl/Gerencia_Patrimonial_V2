@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -83,7 +84,15 @@ DATABASES = {
         'PORT': '5432',
     }
 }
-
+if 'test' in sys.argv or os.environ.get('DJANGO_TESTING') == 'True':
+    DATABASES['default'] = { 
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('TEST_DB_NAME'),
+        'USER': os.environ.get('TEST_DB_USER'),
+        'PASSWORD': os.environ.get('TEST_DB_PASSWORD'),
+        'HOST': os.environ.get('TEST_DB_HOST'),
+        'PORT': os.environ.get('TEST_DB_PORT'),
+    }
 
 
 # Password validation
