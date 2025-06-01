@@ -12,7 +12,7 @@ O **diagrama de classes** é uma representação visual que ilustra a estrutura 
 
 <center>
 
-<iframe src="./assets/DiagramaDeClasses.pdf" width="100%" height="600px" allowfullscreen></iframe>
+<iframe src="./assets/DiagramaClasses.pdf" width="100%" height="600px" allowfullscreen></iframe>
 
 _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
@@ -26,7 +26,7 @@ O **diagrama de pacotes** é uma representação visual que organiza e agrupa os
 
 <center>
 
-<iframe src="./assets/DiagramaDePacotes.pdf" width="100%" height="600px" allowfullscreen></iframe>
+<iframe src="./assets/DiagramaPacotes.pdf" width="100%" height="600px" allowfullscreen></iframe>
 
 _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
@@ -42,4 +42,5 @@ _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
 | Versão | Data | Descrição | 
 | :------: | :----------: | :-----------: |
-| `1.0` | 09/05/2025 | Criação do documento dos Diagramas UML |
+| `1.0` | 09/05/2025 | Criação do documento dos diagramas UML |
+| `1.1` | 01/06/2025 | Revisa e adapta diagrama de classes para convenções Python |
