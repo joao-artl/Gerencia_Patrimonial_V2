@@ -15,7 +15,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Construir imagens Docker
-      run: docker compose build
+      run: docker compose build db db_test web tests 
 
     - name: Rodar testes com Docker Compose
       run: docker compose run --rm tests 

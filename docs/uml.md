@@ -12,7 +12,7 @@ O **diagrama de classes** é uma representação visual que ilustra a estrutura 
 
 <center>
 
-<iframe src="./assets/DiagramaClasses.pdf" width="100%" height="600px" allowfullscreen></iframe>
+<iframe src="./assets/DiagramaDeClasses.pdf" width="100%" height="600px" allowfullscreen></iframe>
 
 _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
@@ -28,7 +28,7 @@ Isso significa que cada pacote no diagrama representa um app, evidenciando a mod
 
 <center>
 
-<iframe src="./assets/DiagramaPacotes.pdf" width="100%" height="600px" allowfullscreen></iframe>
+<iframe src="./assets/DiagramaDePacotes.pdf" width="100%" height="600px" allowfullscreen></iframe>
 
 _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
