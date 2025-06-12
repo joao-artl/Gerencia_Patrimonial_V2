@@ -12,7 +12,7 @@ O **diagrama de classes** é uma representação visual que ilustra a estrutura 
 
 <center>
 
-<iframe src="./assets/DiagramaDeClasses.pdf" width="100%" height="600px" allowfullscreen></iframe>
+<iframe src="./assets/DiagramaClasses.pdf" width="100%" height="600px" allowfullscreen></iframe>
 
 _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
@@ -20,13 +20,15 @@ _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
 ## <a>3. Diagrama de Pacotes</a>
 
-O **diagrama de pacotes** é uma representação visual que organiza e agrupa os elementos do sistema em unidades lógicas chamadas pacotes. Ele evidencia a modularização da aplicação, mostrando como os diferentes pacotes se relacionam entre si, bem como suas dependências e responsabilidades. Ele serve como referência para estruturar o projeto de forma coesa e escalável, permitindo a separação clara de responsabilidades entre as diferentes partes da aplicação.
+O **diagrama de pacotes** é uma representação visual que organiza os elementos do sistema em unidades lógicas. Para este projeto, ele foi desenvolvido para espelhar a estrutura de aplicativos (apps) do [Django](https://docs.djangoproject.com/en/5.2/), que é o framework utilizado.
+
+Isso significa que cada pacote no diagrama representa um app, evidenciando a modularização da aplicação e mostrando como eles se relacionam entre si. Ele serve como um guia visual para estruturar o projeto de forma coesa e escalável, garantindo a separação de responsabilidades.
 
 ### <a>3.1 Diagrama</a>
 
 <center>
 
-<iframe src="./assets/DiagramaDePacotes.pdf" width="100%" height="600px" allowfullscreen></iframe>
+<iframe src="./assets/DiagramaPacotes.pdf" width="100%" height="600px" allowfullscreen></iframe>
 
 _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 
@@ -44,3 +46,4 @@ _Fonte: [João Artur Leles](https://github.com/joao-artl)_
 | :------: | :----------: | :-----------: |
 | `1.0` | 09/05/2025 | Criação do documento dos diagramas UML |
 | `1.1` | 01/06/2025 | Revisa e adapta diagrama de classes para convenções Python |
+| `1.2` | 12/06/2025 | Adiciona usuários ao diagrama de classes e adapta diagrama de pacotes para o Django |
