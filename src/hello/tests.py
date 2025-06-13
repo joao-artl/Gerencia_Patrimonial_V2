@@ -1,6 +1,7 @@
 from django.test import TestCase
 import unittest
 
+
 class TDDTest(TestCase):
     @unittest.skip("Ignorar até implementação final")
     def test_criacao_empresa(self):
@@ -59,12 +60,12 @@ class TDDTest(TestCase):
         filial = Filial()
         filial.patrimonios = [Veiculo(nome="Caminhão"), Utilitario(nome="Furadeira")]
         nomes = filial.getNomesPatrimonios()
-        
+
         self.assertIsInstance(nomes, list)
         self.assertIn("Caminhão", nomes)
-        
+
     @unittest.skip("Ignorar até implementação final")
     def test_veiculo_herda_item_patrimonio(veiculo):
         assert isinstance(veiculo, Veiculo)
         assert hasattr(veiculo, 'valor')
-        assert hasattr(veiculo, 'cor') 
+        assert hasattr(veiculo, 'cor')

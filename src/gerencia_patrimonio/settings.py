@@ -85,7 +85,7 @@ DATABASES = {
     }
 }
 if 'test' in sys.argv or os.environ.get('DJANGO_TESTING') == 'True':
-    DATABASES['default'] = { 
+    DATABASES['default'] = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('TEST_DB_NAME'),
         'USER': os.environ.get('TEST_DB_USER'),
