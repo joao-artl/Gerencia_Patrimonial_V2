@@ -93,7 +93,8 @@ services:
     build: .
     volumes:
       - ./src:/app
-    command: flake8 .
+    # Aumenta o limite de caracteres para acomodar linhas longas geradas automaticamente pelo Django
+    command: flake8 . --max-line-length=95 
 
 volumes:
   postgres_data:
