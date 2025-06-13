@@ -89,5 +89,11 @@ services:
       - DJANGO_SETTINGS_MODULE=gerencia_patrimonio.settings
       - PYTHONUNBUFFERED=1
 
+  lint:
+    build: .
+    volumes:
+      - ./src:/app
+    command: flake8 .
+
 volumes:
   postgres_data:

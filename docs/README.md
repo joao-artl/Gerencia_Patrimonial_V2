@@ -9,6 +9,9 @@ documentos do projeto:
 Na raiz do projeto:
 ```docker-compose up --build```
 
+Para rodar sem o Lint:
+```docker compose build db db_test web tests```
+
 Com isso será possivel acessar http://localhost:8000
 
 Além disso é possivel executar alguns comandos, 
@@ -20,3 +23,6 @@ Além disso é possivel executar alguns comandos,
 *Para rodar os testes:*
 
 ```docker-compose exec web python manage.py test```
+
+*ou:*
+```docker-compose run --rm tests```
