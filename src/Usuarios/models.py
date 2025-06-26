@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
 TIPO_USUARIO_CHOICES = [
@@ -12,10 +11,8 @@ class Usuario(models.Model):
     email = models.EmailField(max_length=255, verbose_name="E-mail")
     nome = models.CharField(max_length=255, verbose_name="Nome Completo")
     senha = models.CharField(max_length=128, verbose_name="Senha")
-    tipo_usuario = models.CharField(
-        max_length=20,
-        choices=TIPO_USUARIO_CHOICES,
-        verbose_name="Tipo de Usuário"
-    )
+    tipo_usuario = models.CharField(max_length=20, choices=TIPO_USUARIO_CHOICES, verbose_name="Tipo de Usuário")
+    filial_associada = models.ForeignKey('EmpresaFilial.Filial', on_delete=models.CASCADE, null=True, blank=True, related_name='funcionarios')
+    
     def __str__(self):
         return self.nome
