@@ -14,5 +14,9 @@ class Usuario(models.Model):
     tipo_usuario = models.CharField(max_length=20, choices=TIPO_USUARIO_CHOICES, verbose_name="Tipo de Usuário")
     filial_associada = models.ForeignKey('EmpresaFilial.Filial', on_delete=models.CASCADE, null=True, blank=True, related_name='funcionarios')
     
+    class Meta:
+        verbose_name="Usuario"
+        verbose_name_plural="Usuarios"
+    
     def __str__(self):
         return self.nome

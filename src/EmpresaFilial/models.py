@@ -10,6 +10,10 @@ class Endereco(models.Model):
     complemento = models.CharField(max_length=60, blank=True, null=True, verbose_name="Complemento (Opcional)")
     numero = models.CharField(max_length=10, blank=True, null=True, verbose_name="Número (Opcional)")
 
+    class Meta:
+        verbose_name="Endereço"
+        verbose_name_plural="Endereços"
+    
     def __str__(self):
         primeira_parte_elementos = []
         primeira_parte_elementos.append(self.logradouro)
@@ -33,6 +37,10 @@ class Empresa(models.Model):
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
     gestores = models.ManyToManyField('Usuarios.Usuario', through='Gerencia', related_name='empresa_administrada')
 
+    class Meta:
+        verbose_name="Empresa"
+        verbose_name_plural="Empresas"
+    
     def __str__(self):
         return self.nome
     
@@ -56,5 +64,9 @@ class Filial(models.Model):
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
     empresa_matriz = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='filiais')
 
+    class Meta:
+        verbose_name="Filial"
+        verbose_name_plural="Filiais"
+    
     def __str__(self):
         return self.nome
