@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.apps import apps
 
 
 class Endereco(models.Model):
@@ -11,9 +13,10 @@ class Endereco(models.Model):
     numero = models.CharField(max_length=10, blank=True, null=True, verbose_name="Número (Opcional)")
 
     class Meta:
+        unique_together = (('logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep'),)
         verbose_name="Endereço"
         verbose_name_plural="Endereços"
-    
+
     def __str__(self):
         primeira_parte_elementos = []
         primeira_parte_elementos.append(self.logradouro)
@@ -36,6 +39,18 @@ class Empresa(models.Model):
     telefone = models.CharField(max_length=11, unique=True, verbose_name="Telefone")
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
     gestores = models.ManyToManyField('Usuarios.Usuario', through='Gerencia', related_name='empresa_administrada')
+
+    def clean(self):
+        if self.endereco:
+            Imobiliario = apps.get_model('Patrimonio', 'Imobiliario')
+            filial_usa = Filial.objects.filter(endereco=self.endereco).exists()
+            imobiliario_usa = Imobiliario.objects.filter(endereco=self.endereco).exists()
+            
+            if filial_usa or imobiliario_usa:
+                raise ValidationError({
+                    'endereco': 'Este endereço já está em uso por uma Filial ou Imobiliário.'
+                })
+        super().clean()
 
     class Meta:
         verbose_name="Empresa"
@@ -63,6 +78,18 @@ class Filial(models.Model):
     telefone = models.CharField(max_length=11, unique=True, verbose_name="Telefone")
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
     empresa_matriz = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='filiais')
+
+    def clean(self):
+        if self.endereco:
+            Imobiliario = apps.get_model('Patrimonio', 'Imobiliario')
+            empresa_usa = Empresa.objects.filter(endereco=self.endereco).exists()
+            imobiliario_usa = Imobiliario.objects.filter(endereco=self.endereco).exists()
+
+            if empresa_usa or imobiliario_usa:
+                raise ValidationError({
+                    'endereco': 'Este endereço já está em uso por uma Empresa ou Imobiliário.'
+                })
+        super().clean()
 
     class Meta:
         verbose_name="Filial"

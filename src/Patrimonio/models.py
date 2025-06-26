@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.apps import apps
 
 
 class ItemDePatrimonio(models.Model):
@@ -27,6 +28,18 @@ class Imobiliario(ItemDePatrimonio):
     def clean(self):
         if self.quantidade != 1:
             raise ValidationError({'quantidade': 'A quantidade para um imóvel deve ser sempre 1.'})
+        if self.endereco:
+            Empresa = apps.get_model('EmpresaFilial', 'Empresa')
+            Filial = apps.get_model('EmpresaFilial', 'Filial')
+
+            empresa_usa = Empresa.objects.filter(endereco=self.endereco).exists()
+            filial_usa = Filial.objects.filter(endereco=self.endereco).exists()
+
+            if empresa_usa or filial_usa:
+                raise ValidationError({
+                    'endereco': 'Este endereço já está em uso por uma Empresa ou Filial.'
+                })
+        super().clean()
 
     def save(self, *args, **kwargs):
         self.full_clean() 
