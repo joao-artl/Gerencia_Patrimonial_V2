@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError #
 from EmpresaFilial.models import Endereco
 
 
@@ -18,6 +19,15 @@ class Imobiliario(ItemDePatrimonio):
     area = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Área")
     tipo = models.CharField(max_length=15,verbose_name="Tipo")
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
+    quantidade = models.IntegerField(default=1) # Define 1 como padrão para quantidade do Imobiliario
+
+    def clean(self):
+        if self.quantidade != 1:
+            raise ValidationError({'quantidade': 'A quantidade para um imóvel deve ser sempre 1.'})
+
+    def save(self, *args, **kwargs):
+        self.full_clean() 
+        super().save(*args, **kwargs)
 
 class Utilitario(ItemDePatrimonio):
     descricao = models.CharField(max_length=50,verbose_name="Descrição")
