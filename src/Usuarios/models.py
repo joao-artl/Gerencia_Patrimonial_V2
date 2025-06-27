@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.exceptions import ValidationError
+from django.apps import apps
 
 
 TIPO_USUARIO_CHOICES = [
@@ -13,6 +15,19 @@ class Usuario(models.Model):
     senha = models.CharField(max_length=128, verbose_name="Senha")
     tipo_usuario = models.CharField(max_length=20, choices=TIPO_USUARIO_CHOICES, verbose_name="Tipo de Usuário")
     filial_associada = models.ForeignKey('EmpresaFilial.Filial', on_delete=models.CASCADE, null=True, blank=True, related_name='funcionarios')
+    
+    def clean(self):
+        if self.email:
+            empresa = apps.get_model('EmpresaFilial', 'Empresa')
+            filial = apps.get_model('EmpresaFilial', 'Filial')
+            empresa_email = empresa.objects.filter(email=self.email).exists()
+            filial_email = filial.objects.filter(email=self.email).exists()
+            
+            if empresa_email or filial_email:
+                raise ValidationError({
+                    'email': 'Este email já está em uso por uma Empresa ou Filial.'
+                })
+        super().clean()
     
     class Meta:
         verbose_name="Usuario"
