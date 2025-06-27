@@ -12,6 +12,12 @@ class ItemDePatrimonio(models.Model):
     class Meta:
         abstract = True
 
+    def clean(self):
+        if self.quantidade < 1:
+            raise ValidationError({'quantidade': 'A quantidade de qualquer item deve ser de pelo menos 1.'})
+
+        super().clean()
+
     def __str__(self):
         return self.nome
     
