@@ -41,15 +41,42 @@ class Empresa(models.Model):
     gestores = models.ManyToManyField('Usuarios.Usuario', through='Gerencia', related_name='empresa_administrada')
 
     def clean(self):
-        if self.endereco:
-            Imobiliario = apps.get_model('Patrimonio', 'Imobiliario')
-            filial_usa = Filial.objects.filter(endereco=self.endereco).exists()
-            imobiliario_usa = Imobiliario.objects.filter(endereco=self.endereco).exists()
+        if self.telefone:
+            filial_telefone = Filial.objects.filter(telefone=self.telefone).exists()
             
-            if filial_usa or imobiliario_usa:
+            if filial_telefone:
+                raise ValidationError({
+                    'telefone': 'Este telefone já está em uso por uma Filial.'
+                })
+    
+        if self.cnpj:
+            filial_cnpj = Filial.objects.filter(cnpj=self.cnpj).exists()
+
+            if filial_cnpj:
+                raise ValidationError({
+                    'cnpj': 'Este CNPJ já está em uso por uma Filial.'
+                })
+    
+        if self.email:
+            usuario = apps.get_model('Usuarios', 'Usuario')
+            usuario_email = usuario.objects.filter(email=self.email).exists()
+            filial_email = Filial.objects.filter(email=self.email).exists()
+            
+            if usuario_email or filial_email:
+                raise ValidationError({
+                    'email': 'Este email já está em uso por um Usuário ou Filial.'
+                })
+            
+        if self.endereco:
+            imobiliario = apps.get_model('Patrimonio', 'Imobiliario')
+            filial_endereco = Filial.objects.filter(endereco=self.endereco).exists()
+            imobiliario_endereco = imobiliario.objects.filter(endereco=self.endereco).exists()
+            
+            if filial_endereco or imobiliario_endereco:
                 raise ValidationError({
                     'endereco': 'Este endereço já está em uso por uma Filial ou Imobiliário.'
                 })
+            
         super().clean()
 
     class Meta:
@@ -80,15 +107,42 @@ class Filial(models.Model):
     empresa_matriz = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='filiais')
 
     def clean(self):
+        if self.telefone:
+            empresa_telefone = Empresa.objects.filter(telefone=self.telefone).exists()
+            
+            if empresa_telefone:
+                raise ValidationError({
+                    'telefone': 'Este telefone já está em uso por uma Empresa.'
+                })
+    
+        if self.cnpj:
+            empresa_cnpj = Empresa.objects.filter(cnpj=self.cnpj).exists()
+            
+            if empresa_cnpj:
+                raise ValidationError({
+                    'cnpj': 'Este CNPJ já está em uso por uma Empresa.'
+                })
+    
+        if self.email:
+            usuario = apps.get_model('Usuarios', 'Usuario')
+            usuario_email = usuario.objects.filter(email=self.email).exists()
+            empresa_email = Empresa.objects.filter(email=self.email).exists()
+            
+            if usuario_email or empresa_email:
+                raise ValidationError({
+                    'email': 'Este email já está em uso por um Usuário ou Empresa.'
+                })
+            
         if self.endereco:
-            Imobiliario = apps.get_model('Patrimonio', 'Imobiliario')
-            empresa_usa = Empresa.objects.filter(endereco=self.endereco).exists()
-            imobiliario_usa = Imobiliario.objects.filter(endereco=self.endereco).exists()
+            imobiliario = apps.get_model('Patrimonio', 'Imobiliario')
+            empresa_endereco = Empresa.objects.filter(endereco=self.endereco).exists()
+            imobiliario_endereco = imobiliario.objects.filter(endereco=self.endereco).exists()
 
-            if empresa_usa or imobiliario_usa:
+            if empresa_endereco or imobiliario_endereco:
                 raise ValidationError({
                     'endereco': 'Este endereço já está em uso por uma Empresa ou Imobiliário.'
                 })
+            
         super().clean()
 
     class Meta:

@@ -29,13 +29,13 @@ class Imobiliario(ItemDePatrimonio):
         if self.quantidade != 1:
             raise ValidationError({'quantidade': 'A quantidade para um imóvel deve ser sempre 1.'})
         if self.endereco:
-            Empresa = apps.get_model('EmpresaFilial', 'Empresa')
-            Filial = apps.get_model('EmpresaFilial', 'Filial')
+            empresa = apps.get_model('EmpresaFilial', 'Empresa')
+            filial = apps.get_model('EmpresaFilial', 'Filial')
 
-            empresa_usa = Empresa.objects.filter(endereco=self.endereco).exists()
-            filial_usa = Filial.objects.filter(endereco=self.endereco).exists()
+            empresa_endereco = empresa.objects.filter(endereco=self.endereco).exists()
+            filial_endereco = filial.objects.filter(endereco=self.endereco).exists()
 
-            if empresa_usa or filial_usa:
+            if empresa_endereco or filial_endereco:
                 raise ValidationError({
                     'endereco': 'Este endereço já está em uso por uma Empresa ou Filial.'
                 })
