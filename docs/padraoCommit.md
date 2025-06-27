@@ -9,7 +9,7 @@ O padrão de mensagens de commit utilizado é inspirado no [Conventional Commits
 | `feat`      | Adição de nova funcionalidade                 |
 | `fix`       | Correção de bug                              |
 | `docs`      | Alterações na documentação                    |
-| `tests`     | Adição ou modificação de testes               |
+| `test`     | Adição ou modificação de testes               |
 | `infra`     | Configuração ou mudanças na infraestrutura    |
 | `refactor`  | Refatorações que não alteram comportamento    |
 | `style`     | Formatação, identação, espaçamento etc.       |

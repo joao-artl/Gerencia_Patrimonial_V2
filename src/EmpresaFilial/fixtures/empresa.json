@@ -1,0 +1,1 @@
+[{"model": "EmpresaFilial.empresa", "pk": 1, "fields": {"cnpj": "124578963", "nome": "Empresa 1", "senha": "123456", "email": "empresa1@email.com", "telefone": "21987324568", "endereco": 1}}, {"model": "EmpresaFilial.empresa", "pk": 2, "fields": {"cnpj": "986532147", "nome": "Empresa 2", "senha": "978563", "email": "empresa2@email.com", "telefone": "61976215632", "endereco": 3}}]
