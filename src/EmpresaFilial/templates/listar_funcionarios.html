@@ -1,0 +1,11 @@
+<h1>Funcionários da Filial: {{ filial.nome }}</h1>
+
+{% if funcionarios %}
+    <ul>
+        {% for funcionario in funcionarios %}
+            <li>{{ funcionario.nome }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Não há funcionários cadastrados nesta filial.</p>
+{% endif %}

@@ -1,0 +1,11 @@
+<h1>Gestores da Empresa: {{ empresa.nome }}</h1>
+
+{% if gestores %}
+    <ul>
+        {% for gestor in gestores %}
+            <li>{{ gestor.nome }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Não há gestores cadastrados nesta empresa.</p>
+{% endif %}
