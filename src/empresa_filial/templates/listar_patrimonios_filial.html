@@ -1,9 +1,0 @@
-<h2>Patrimônios da Filial {{ filial.nome }}</h2>
-
-<ul>
-  {% for item in patrimonios %}
-    <li>{{ item.nome }} ({{ item.tipo }})</li>
-  {% empty %}
-    <li>Nenhum patrimônio encontrado.</li>
-  {% endfor %}
-</ul>
