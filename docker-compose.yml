@@ -30,13 +30,11 @@ services:
   web:
     build: .
     command: >
-      sh -c "echo 'Waiting for production database...' &&
-             while ! nc -z db 5432; do sleep 1; done &&
-             echo 'Production database ready.' &&
-             echo 'Running migrations...' &&
-             python /app/manage.py migrate &&
-             echo 'Starting server...' &&
-             python /app/manage.py runserver 0.0.0.0:8000"
+      sh -c "python manage.py wait_for_db &&
+            echo 'Running migrations...' &&
+            python manage.py migrate &&
+            echo 'Starting server...' &&
+            python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./src:/app
     ports:
@@ -62,9 +60,7 @@ services:
   tests:
     build: .
     command: >
-      sh -c "echo 'Waiting for test database...' &&
-             while ! nc -z db_test 5432; do sleep 1; done &&
-             echo 'Test database ready.' &&
+      sh -c "python /app/manage.py wait_for_db_test &&
              echo 'Running tests...' &&
              python /app/manage.py test"
     volumes:
