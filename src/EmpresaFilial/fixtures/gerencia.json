@@ -1,1 +1,0 @@
-[{"model": "EmpresaFilial.gerencia", "pk": 1, "fields": {"usuario": 1, "empresa": 1}}, {"model": "EmpresaFilial.gerencia", "pk": 2, "fields": {"usuario": 1, "empresa": 2}}, {"model": "EmpresaFilial.gerencia", "pk": 3, "fields": {"usuario": 3, "empresa": 1}}]
