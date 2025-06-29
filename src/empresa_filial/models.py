@@ -150,4 +150,4 @@ class Filial(models.Model):
         verbose_name_plural="Filiais"
     
     def __str__(self):
-        return self.nome
+        return f"Filial: {self.nome}, CNPJ: {self.cnpj}, Empresa Matriz: {self.empresa_matriz.nome}"

@@ -1,14 +1,28 @@
 from rest_framework import viewsets
-from django.shortcuts import render, get_object_or_404
 from .models import Usuario
-from .serializers import UsuarioSerializer
-
+from empresa_filial.models import Gerencia
+from .serializers import UsuarioSerializer, GerenciaSerializer
 
 class UsuarioViewSet(viewsets.ModelViewSet):
-    queryset = Usuario.objects.all().order_by('-cpf')
+    queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
 
-def listar_empresa(request, usuario_id):
-    usuario = get_object_or_404(Usuario, id=usuario_id)
-    empresa_administrada = usuario.empresa_administrada.all()
-    return render(request, 'listar_empresa_administrada.html', {'usuario': usuario, 'empresa_administrada': empresa_administrada})
+
+class FuncionarioViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = UsuarioSerializer
+    
+    def get_queryset(self):
+        return Usuario.objects.filter(
+            tipo_usuario='FUNCIONARIO',
+            filial_associada_id=self.kwargs['filial_pk']
+        )
+
+
+class GerenciaViewSet(viewsets.ModelViewSet):
+    serializer_class = GerenciaSerializer
+
+    def get_queryset(self):
+        return Gerencia.objects.filter(empresa_id=self.kwargs['empresa_pk'])
+
+    def perform_create(self, serializer):
+        serializer.save(empresa_id=self.kwargs['empresa_pk'])
