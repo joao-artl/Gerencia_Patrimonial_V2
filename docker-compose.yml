@@ -54,7 +54,7 @@ services:
       - TEST_DB_NAME=test_gerenciapatrimonio
       - TEST_DB_USER=test_admin
       - TEST_DB_PASSWORD=test_admin
-      - DJANGO_SETTINGS_MODULE=gerencia_patrimonio.settings
+      - DJANGO_SETTINGS_MODULE=configuracao.settings
       - PYTHONUNBUFFERED=1
 
   tests:
@@ -82,7 +82,7 @@ services:
       - TEST_DB_NAME=test_gerenciapatrimonio
       - TEST_DB_USER=test_admin
       - TEST_DB_PASSWORD=test_admin
-      - DJANGO_SETTINGS_MODULE=gerencia_patrimonio.settings
+      - DJANGO_SETTINGS_MODULE=configuracao.settings
       - PYTHONUNBUFFERED=1
 
   lint:

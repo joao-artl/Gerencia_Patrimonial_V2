@@ -53,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'gerencia_patrimonio.urls'
+ROOT_URLCONF = 'configuracao.urls'
 
 TEMPLATES = [
     {
@@ -70,7 +70,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'gerencia_patrimonio.wsgi.application'
+WSGI_APPLICATION = 'configuracao.wsgi.application'
 
 
 # Database
