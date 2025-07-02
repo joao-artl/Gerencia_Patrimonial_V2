@@ -1,10 +1,21 @@
 from rest_framework import viewsets
-from .models import Empresa, Filial
+from rest_framework.permissions import IsAuthenticated
+from .models import Empresa, Filial, Gerencia 
 from .serializers import EmpresaSerializer, FilialSerializer
+from usuarios.permissions import IsGestor
 
 class EmpresaViewSet(viewsets.ModelViewSet):
     queryset = Empresa.objects.prefetch_related('filiais', 'endereco').all()
     serializer_class = EmpresaSerializer
+    permission_classes = [IsAuthenticated, IsGestor]
+
+    def perform_create(self, serializer):
+        empresa_criada = serializer.save()
+
+        Gerencia.objects.create(
+            usuario=self.request.user,
+            empresa=empresa_criada      
+        )
 
 class FilialViewSet(viewsets.ModelViewSet):
     serializer_class = FilialSerializer

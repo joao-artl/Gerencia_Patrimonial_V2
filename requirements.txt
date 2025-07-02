@@ -1,5 +1,6 @@
 Django>=4.2
 djangorestframework
+djangorestframework-simplejwt
 drf-nested-routers
 pytest
 pytest-django
