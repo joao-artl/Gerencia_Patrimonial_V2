@@ -34,7 +34,7 @@ class Endereco(models.Model):
 class Empresa(models.Model):
     cnpj = models.CharField(max_length=14, unique=True, verbose_name="CNPJ")
     nome = models.CharField(max_length=255, verbose_name="Nome")
-    senha = models.CharField(max_length=128, verbose_name="Senha")
+    password = models.CharField(max_length=128, verbose_name="Senha")
     email = models.EmailField(max_length=255, unique=True, verbose_name="E-mail")
     telefone = models.CharField(max_length=11, unique=True, verbose_name="Telefone")
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
@@ -100,7 +100,7 @@ class Gerencia(models.Model):
 class Filial(models.Model):
     cnpj = models.CharField(max_length=14, unique=True, verbose_name="CNPJ")
     nome = models.CharField(max_length=255, verbose_name="Nome")
-    senha = models.CharField(max_length=128, verbose_name="Senha")
+    password = models.CharField(max_length=128, verbose_name="Senha")
     email = models.EmailField(max_length=255, unique=True, verbose_name="E-mail")
     telefone = models.CharField(max_length=11, unique=True, verbose_name="Telefone")
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")

@@ -37,7 +37,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             if not senha_filial_submetida:
                 raise serializers.ValidationError({"senha_da_filial": "A senha da filial é obrigatória para cadastrar um funcionário."})
 
-            if not check_password(senha_filial_submetida, filial_associada_obj.senha):
+            if not check_password(senha_filial_submetida, filial_associada_obj.password):
                 raise serializers.ValidationError({"senha_da_filial": "A senha da filial está incorreta."})
 
         if tipo_usuario == 'GESTOR' and filial_associada_obj:
@@ -86,7 +86,7 @@ class GerenciaSerializer(serializers.ModelSerializer):
 
         senha_empresa_submetida = data.get('senha_da_empresa')
 
-        if not check_password(senha_empresa_submetida, empresa.senha):
+        if not check_password(senha_empresa_submetida, empresa.password):
             raise serializers.ValidationError({"senha_da_empresa": "A senha da empresa está incorreta."})
 
         data.pop('senha_da_empresa')
