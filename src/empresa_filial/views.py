@@ -3,15 +3,16 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.hashers import check_password
-from .models import Empresa, Filial, Gerencia
-from .serializers import EmpresaSerializer, FilialSerializer, JoinEmpresaSerializer
+from .models import Empresa, Filial, Gerencia 
+from .serializers import EmpresaSerializer, FilialSerializer, JoinEmpresaSerializer 
 from patrimonio.models import Veiculo, Utilitario, Imobiliario
 from patrimonio.serializers import VeiculoSerializer, UtilitarioSerializer, ImobiliarioSerializer
 from usuarios.permissions import IsGestor, IsManagerOfParentCompany
+from usuarios.models import Usuario
+from usuarios.serializers import UsuarioSerializer
 
 
 class EmpresaViewSet(viewsets.ModelViewSet):
-
     queryset = Empresa.objects.prefetch_related('filiais', 'endereco').all()
     serializer_class = EmpresaSerializer
     permission_classes = [IsAuthenticated, IsGestor]
@@ -30,6 +31,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
         serializer = JoinEmpresaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
         senha_submetida = serializer.validated_data['senha_da_empresa']
 
         if not check_password(senha_submetida, empresa.password):
@@ -69,6 +71,19 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             }
 
         return Response(resposta_consolidada)
+        
+    @action(detail=True, methods=['get'], url_path='funcionarios', permission_classes=[IsAuthenticated, IsManagerOfParentCompany])
+    def listar_todos_funcionarios(self, request, pk=None):
+        empresa = self.get_object()
+
+        funcionarios_da_empresa = Usuario.objects.filter(
+            tipo_usuario='FUNCIONARIO',
+            filial_associada__empresa_matriz=empresa
+        )
+
+        serializer = UsuarioSerializer(funcionarios_da_empresa, many=True)
+        
+        return Response(serializer.data)
 
 
 class FilialViewSet(viewsets.ModelViewSet):
