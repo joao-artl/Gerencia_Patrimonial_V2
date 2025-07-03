@@ -2,15 +2,16 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from usuarios.permissions import IsEmployeeOfThisBranchOrManager 
+from rest_framework.filters import SearchFilter
+from usuarios.permissions import IsEmployeeOfThisBranchOrManager
 from .models import Imobiliario, Utilitario, Veiculo
 from .serializers import ImobiliarioSerializer, UtilitarioSerializer, VeiculoSerializer
-from itertools import chain
 
 class BasePatrimonioViewSet(viewsets.ModelViewSet):
-    
+
     permission_classes = [IsAuthenticated, IsEmployeeOfThisBranchOrManager]
-    
+    filter_backends = [SearchFilter]
+
     def get_queryset(self):
         return self.queryset.filter(filial_associada_id=self.kwargs['filial_pk'])
 
@@ -18,22 +19,38 @@ class BasePatrimonioViewSet(viewsets.ModelViewSet):
         serializer.save(filial_associada_id=self.kwargs['filial_pk'])
 
 class VeiculoViewSet(BasePatrimonioViewSet):
+
     queryset = Veiculo.objects.all()
     serializer_class = VeiculoSerializer
 
+    search_fields = ['nome', 'modelo', 'fabricante', 'cor']
+
 class UtilitarioViewSet(BasePatrimonioViewSet):
+
     queryset = Utilitario.objects.all()
     serializer_class = UtilitarioSerializer
 
+    search_fields = ['nome', 'descricao', 'funcao']
+
 class ImobiliarioViewSet(BasePatrimonioViewSet):
+
     queryset = Imobiliario.objects.all()
     serializer_class = ImobiliarioSerializer
+    
+    search_fields = [
+        'nome', 
+        'tipo', 
+        'endereco__logradouro', 
+        'endereco__bairro', 
+        'endereco__cidade',
+        'endereco__estado',
+        'endereco__cep'
+    ]
 
 class PatrimonioDaFilialListView(APIView):
     permission_classes = [IsAuthenticated, IsEmployeeOfThisBranchOrManager]
 
     def get(self, request, empresa_pk=None, filial_pk=None):
-
         veiculos = Veiculo.objects.filter(filial_associada_id=filial_pk)
         utilitarios = Utilitario.objects.filter(filial_associada_id=filial_pk)
         imobiliarios = Imobiliario.objects.filter(filial_associada_id=filial_pk)
