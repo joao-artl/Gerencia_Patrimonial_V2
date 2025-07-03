@@ -36,3 +36,35 @@ class ImobiliarioSerializer(serializers.ModelSerializer):
             endereco_instance.save()
             
         return super().update(instance, validated_data)
+    
+class PatrimonioPolimorficoSerializer(serializers.ModelSerializer):
+    tipo_patrimonio = serializers.SerializerMethodField()
+
+    class Meta:
+        fields = ['id', 'nome', 'valor', 'quantidade', 'tipo_patrimonio', 'detalhes']
+
+    def get_tipo_patrimonio(self, obj):
+        return obj.__class__.__name__
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if isinstance(instance, Veiculo):
+            data['detalhes'] = VeiculoSerializer(instance).data
+        elif isinstance(instance, Utilitario):
+            data['detalhes'] = UtilitarioSerializer(instance).data
+        elif isinstance(instance, Imobiliario):
+            data['detalhes'] = ImobiliarioSerializer(instance).data
+            
+        return data
+
+class VeiculoPolimorficoSerializer(PatrimonioPolimorficoSerializer):
+    class Meta(PatrimonioPolimorficoSerializer.Meta):
+        model = Veiculo
+
+class UtilitarioPolimorficoSerializer(PatrimonioPolimorficoSerializer):
+    class Meta(PatrimonioPolimorficoSerializer.Meta):
+        model = Utilitario
+
+class ImobiliarioPolimorficoSerializer(PatrimonioPolimorficoSerializer):
+    class Meta(PatrimonioPolimorficoSerializer.Meta):
+        model = Imobiliario
