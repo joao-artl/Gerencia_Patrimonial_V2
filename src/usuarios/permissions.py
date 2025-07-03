@@ -62,12 +62,13 @@ class IsManagerOfParentCompany(permissions.BasePermission):
 
     def has_permission(self, request, view):
         user = request.user
-        empresa_pk = view.kwargs.get('empresa_pk')
+        
+        empresa_pk = view.kwargs.get('empresa_pk') or view.kwargs.get('pk')
 
         if not user or not user.is_authenticated or not empresa_pk:
             return False
 
         if user.is_superuser:
             return True
-        
+
         return user.tipo_usuario == 'GESTOR' and user.empresa_administrada.filter(pk=empresa_pk).exists()
