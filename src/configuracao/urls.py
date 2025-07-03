@@ -16,15 +16,45 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from usuarios.auth_views import MyTokenObtainPairView 
+from rest_framework_nested import routers
+from usuarios.auth_views import MyTokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
+from empresa_filial.views import EmpresaViewSet, FilialViewSet
+from usuarios.views import UsuarioViewSet, GerenciaViewSet, FuncionarioViewSet
+from patrimonio.views import ImobiliarioViewSet, UtilitarioViewSet, VeiculoViewSet
+
+router = routers.DefaultRouter()
+
+router.register(r'usuarios', UsuarioViewSet, basename='usuario')
+router.register(r'empresas', EmpresaViewSet, basename='empresa')
+
+filiais_router = routers.NestedSimpleRouter(router, r'empresas', lookup='empresa')
+filiais_router.register(r'filiais', FilialViewSet, basename='empresa-filiais')
+
+gestores_router = routers.NestedSimpleRouter(router, r'empresas', lookup='empresa')
+gestores_router.register(r'gestores', GerenciaViewSet, basename='empresa-gestores')
+
+funcionarios_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
+funcionarios_router.register(r'funcionarios', FuncionarioViewSet, basename='filial-funcionarios')
+
+veiculos_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
+veiculos_router.register(r'veiculos', VeiculoViewSet, basename='filial-veiculos')
+
+utilitarios_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
+utilitarios_router.register(r'utilitarios', UtilitarioViewSet, basename='filial-utilitarios')
+
+imobiliarios_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
+imobiliarios_router.register(r'imobiliarios', ImobiliarioViewSet, basename='filial-imobiliarios')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('usuarios.urls')),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include(router.urls)),
+    path('api/', include(filiais_router.urls)),
+    path('api/', include(gestores_router.urls)),
+    path('api/', include(funcionarios_router.urls)),
+    path('api/', include(veiculos_router.urls)),
+    path('api/', include(utilitarios_router.urls)),
+    path('api/', include(imobiliarios_router.urls)),
 ]
-
-
-

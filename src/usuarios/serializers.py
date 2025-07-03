@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import check_password 
+from django.contrib.auth.hashers import check_password
 from .models import Usuario
 from empresa_filial.models import Gerencia, Filial, Empresa
 
-
 class UsuarioSerializer(serializers.ModelSerializer):
+    
     filial_associada = serializers.PrimaryKeyRelatedField(
         queryset=Filial.objects.all(),
         required=False,
@@ -18,12 +18,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
         label="Senha da Filial"
     )
 
+    senha = serializers.CharField(
+        source='password', 
+        write_only=True, 
+        style={'input_type': 'password'}
+    )
+
     class Meta:
         model = Usuario
-        fields = ['id', 'cpf', 'email', 'nome', 'password', 'tipo_usuario', 'filial_associada', 'senha_da_filial']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        fields = ['id', 'cpf', 'email', 'nome', 'senha', 'tipo_usuario', 'filial_associada', 'senha_da_filial']
 
     def validate(self, data):
         tipo_usuario = data.get('tipo_usuario')
@@ -31,7 +34,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         if tipo_usuario == 'FUNCIONARIO':
             if not filial_associada_obj:
-                raise serializers.ValidationError({"filial_associada": "Para o tipo 'Funcionário', a filial associada é obrigatória."})
+                raise serializers.ValidationError({"filial_associada": "Para criar um 'Funcionário', a filial associada é obrigatória."})
 
             senha_filial_submetida = data.get('senha_da_filial')
             if not senha_filial_submetida:
@@ -55,7 +58,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         
         return super().update(instance, validated_data)
-
 
 class GerenciaSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer(read_only=True)

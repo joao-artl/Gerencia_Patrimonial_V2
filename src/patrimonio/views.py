@@ -1,8 +1,12 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from usuarios.permissions import IsEmployeeOfThisBranchOrManager 
 from .models import Imobiliario, Utilitario, Veiculo
 from .serializers import ImobiliarioSerializer, UtilitarioSerializer, VeiculoSerializer
 
 class BasePatrimonioViewSet(viewsets.ModelViewSet):
+    
+    permission_classes = [IsAuthenticated, IsEmployeeOfThisBranchOrManager]
     
     def get_queryset(self):
         return self.queryset.filter(filial_associada_id=self.kwargs['filial_pk'])
@@ -21,3 +25,5 @@ class UtilitarioViewSet(BasePatrimonioViewSet):
 class ImobiliarioViewSet(BasePatrimonioViewSet):
     queryset = Imobiliario.objects.all()
     serializer_class = ImobiliarioSerializer
+
+

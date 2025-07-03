@@ -2,23 +2,26 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, seri
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['nome'] = user.nome
-        token['tipo_usuario'] = user.tipo_usuario
-        return token
-
     def __init__(self, *args, **kwargs):
+
         super().__init__(*args, **kwargs)
-        self.fields[self.username_field] = serializers.CharField()
-        self.fields['password'] = serializers.CharField(
-            style={'input_type': 'password'},
-            trim_whitespace=False
-        )
-    @property
-    def username_field(self):
-        return 'email'
+
+        self.fields['email'] = self.fields.pop(self.username_field)
+        self.fields['senha'] = self.fields.pop('password')
+        self.fields['senha'].style = {'input_type': 'password'}
+        self.fields['senha'].trim_whitespace = False
+
+    def validate(self, attrs):
+        
+        attrs['password'] = attrs.pop('senha')
+        
+        data = super().validate(attrs)
+        data.update({
+            'nome': self.user.nome,
+            'tipo_usuario': self.user.tipo_usuario
+        })
+
+        return data
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
