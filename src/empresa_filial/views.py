@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.hashers import check_password
+from django.db.models import Q
 from .models import Empresa, Filial, Gerencia 
 from .serializers import EmpresaSerializer, FilialSerializer, JoinEmpresaSerializer 
 from patrimonio.models import Veiculo, Utilitario, Imobiliario
@@ -58,11 +59,30 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         empresa = self.get_object()
         filiais_da_empresa = empresa.filiais.all()
         resposta_consolidada = {}
+        
+        search_term = request.query_params.get('search', None)
 
         for filial in filiais_da_empresa:
             veiculos = Veiculo.objects.filter(filial_associada=filial)
             utilitarios = Utilitario.objects.filter(filial_associada=filial)
             imobiliarios = Imobiliario.objects.filter(filial_associada=filial)
+
+            if search_term:
+                veiculos = veiculos.filter(
+                    Q(nome__icontains=search_term) |
+                    Q(modelo__icontains=search_term) |
+                    Q(fabricante__icontains=search_term)
+                )
+                utilitarios = utilitarios.filter(
+                    Q(nome__icontains=search_term) |
+                    Q(descricao__icontains=search_term)
+                )
+                imobiliarios = imobiliarios.filter(
+                    Q(nome__icontains=search_term) |
+                    Q(tipo__icontains=search_term) |
+                    Q(endereco__cidade__icontains=search_term) |
+                    Q(endereco__logradouro__icontains=search_term)
+                )
 
             resposta_consolidada[f"Filial: {filial.nome} (ID: {filial.id})"] = {
                 'veiculos': VeiculoSerializer(veiculos, many=True).data,
@@ -75,14 +95,11 @@ class EmpresaViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get'], url_path='funcionarios', permission_classes=[IsAuthenticated, IsManagerOfParentCompany])
     def listar_todos_funcionarios(self, request, pk=None):
         empresa = self.get_object()
-
         funcionarios_da_empresa = Usuario.objects.filter(
             tipo_usuario='FUNCIONARIO',
             filial_associada__empresa_matriz=empresa
         )
-
         serializer = UsuarioSerializer(funcionarios_da_empresa, many=True)
-        
         return Response(serializer.data)
 
 
