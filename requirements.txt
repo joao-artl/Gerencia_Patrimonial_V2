@@ -4,5 +4,6 @@ djangorestframework-simplejwt
 drf-nested-routers
 pytest
 pytest-django
+requests
 psycopg2-binary
 flake8

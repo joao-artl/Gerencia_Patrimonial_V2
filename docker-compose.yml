@@ -60,17 +60,19 @@ services:
   tests:
     build: .
     command: >
-      sh -c "python /app/manage.py wait_for_db_test &&
-             echo 'Running tests...' &&
-             python /app/manage.py test"
+      sh -c "python /app/tests/wait-for-service.py &&
+             echo 'Serviço web está pronto. Rodando suíte de testes...' &&
+             python -m unittest discover -s /app/tests"
     volumes:
-      - ./src:/app
+      - ./src:/app/src
+      - ./tests:/app/tests
     depends_on:
-      db_test:
-        condition: service_healthy
+      web:
+        condition: service_started
       db:
         condition: service_healthy
     environment:
+      - API_HOST=web
       - DATABASE_URL=postgres://admin:admin@db:5432/gerenciapatrimonio
       - DB_HOST=db
       - DB_PORT=5432
