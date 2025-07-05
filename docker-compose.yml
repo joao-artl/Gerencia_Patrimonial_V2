@@ -62,7 +62,7 @@ services:
     command: >
       sh -c "python /app/tests/wait-for-service.py &&
              echo 'Serviço web está pronto. Rodando suíte de testes...' &&
-             python -m unittest discover -s /app/tests"
+             pytest"
     volumes:
       - ./src:/app/src
       - ./tests:/app/tests
@@ -91,6 +91,7 @@ services:
     build: .
     volumes:
       - ./src:/app
+      - ./tests:/app/tests
     # Aumenta o limite de caracteres para acomodar linhas longas geradas automaticamente pelo Django
     command: flake8 . --max-line-length=95 
 
