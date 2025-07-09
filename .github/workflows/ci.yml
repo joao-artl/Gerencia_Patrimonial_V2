@@ -8,7 +8,7 @@ on:
 
 jobs:
   test_and_validate_app:
-    name: Rodar Suíte de Testes
+    name: Rodar Suíte de Testes e Lint
     runs-on: ubuntu-latest
 
     steps:
@@ -23,8 +23,11 @@ jobs:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        API_HOST: web
-
+        DB_HOST: db 
+        DB_PORT: 5432
+        DB_NAME: ${{ secrets.POSTGRES_DB }}
+        DB_USER: ${{ secrets.POSTGRES_USER }}
+        DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: docker compose up --build --abort-on-container-exit --exit-code-from tests
 
     - name: Parar e remover contêineres após a execução

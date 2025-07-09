@@ -1,10 +1,14 @@
 services:
   db:
     image: postgres:15
-    ports:
-      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -22,10 +26,20 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - PYTHONUNBUFFERED=1
     depends_on:
       db:
         condition: service_healthy
-        
+
   tests:
     build: .
     command: >
@@ -38,16 +52,24 @@ services:
       web:
         condition: service_started
     environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
       - API_HOST=web
       - PYTHONUNBUFFERED=1
-      
+
+
   lint:
     build: .
     volumes:
       - ./src:/app
       - ./tests:/app/tests
-    # Aumenta o limite de caracteres para acomodar linhas longas geradas automaticamente pelo Django
-    command: flake8 . --max-line-length=95 
+    command: flake8 . --max-line-length=95
 
 volumes:
   postgres_data:
