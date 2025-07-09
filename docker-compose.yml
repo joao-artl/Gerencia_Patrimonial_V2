@@ -1,8 +1,6 @@
 services:
   db:
     image: postgres:15
-    env_file:
-      - .env
     ports:
       - "5433:5432"
     volumes:
@@ -27,9 +25,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - .env
-
+        
   tests:
     build: .
     command: >
@@ -44,8 +40,6 @@ services:
     environment:
       - API_HOST=web
       - PYTHONUNBUFFERED=1
-    env_file:
-      - .env
       
   lint:
     build: .
