@@ -44,6 +44,8 @@ services:
     environment:
       - API_HOST=web
       - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
       
   lint:
     build: .
