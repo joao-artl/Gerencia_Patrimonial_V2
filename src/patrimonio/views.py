@@ -5,7 +5,17 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from usuarios.permissions import IsEmployeeOfThisBranchOrManager
 from .models import Imobiliario, Utilitario, Veiculo
-from .serializers import ImobiliarioSerializer, UtilitarioSerializer, VeiculoSerializer
+from .serializers import ImobiliarioSerializer, UtilitarioSerializer, VeiculoSerializer, PatrimonioConsolidadoSerializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
+
+
+@extend_schema(
+    parameters=[
+        OpenApiParameter(name='empresa_pk', description='ID da Empresa', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+        OpenApiParameter(name='filial_pk', description='ID da Filial', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+    ]
+)
 
 class BasePatrimonioViewSet(viewsets.ModelViewSet):
 
@@ -50,6 +60,7 @@ class ImobiliarioViewSet(BasePatrimonioViewSet):
 class PatrimonioDaFilialListView(APIView):
     permission_classes = [IsAuthenticated, IsEmployeeOfThisBranchOrManager]
 
+    @extend_schema(responses=PatrimonioConsolidadoSerializer)
     def get(self, request, empresa_pk=None, filial_pk=None):
         veiculos = Veiculo.objects.filter(filial_associada_id=filial_pk)
         utilitarios = Utilitario.objects.filter(filial_associada_id=filial_pk)

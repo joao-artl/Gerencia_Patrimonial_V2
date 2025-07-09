@@ -6,7 +6,8 @@ from empresa_filial.models import Gerencia, Filial
 from .serializers import UsuarioSerializer, GerenciaSerializer
 from empresa_filial.serializers import EmpresaSerializer, FilialSerializer 
 from .permissions import IsOwner, UserCreationPermission, IsEmployeeOfThisBranchOrManager, IsGestor
-
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 class UsuarioViewSet(viewsets.ModelViewSet):
 
@@ -42,6 +43,13 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         serializer = FilialSerializer(filiais, many=True)
         return Response(serializer.data)
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(name='empresa_pk', description='ID da Empresa', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+        OpenApiParameter(name='filial_pk', description='ID da Filial', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+        OpenApiParameter(name='pk', description='ID do Funcionário', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+    ]
+)
 
 class FuncionarioViewSet(viewsets.ReadOnlyModelViewSet):
 
@@ -53,6 +61,13 @@ class FuncionarioViewSet(viewsets.ReadOnlyModelViewSet):
             tipo_usuario='FUNCIONARIO',
             filial_associada_id=self.kwargs['filial_pk']
         )
+
+@extend_schema(
+    parameters=[
+        OpenApiParameter(name='empresa_pk', description='ID da Empresa', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+        OpenApiParameter(name='pk', description='ID da associação de Gerência', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+    ]
+)
 
 class GerenciaViewSet(viewsets.ModelViewSet):
 

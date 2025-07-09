@@ -11,6 +11,8 @@ from patrimonio.serializers import VeiculoSerializer, UtilitarioSerializer, Imob
 from usuarios.permissions import IsGestor, IsManagerOfParentCompany
 from usuarios.models import Usuario
 from usuarios.serializers import UsuarioSerializer
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 
 class EmpresaViewSet(viewsets.ModelViewSet):
@@ -102,6 +104,12 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         serializer = UsuarioSerializer(funcionarios_da_empresa, many=True)
         return Response(serializer.data)
 
+@extend_schema(
+    parameters=[
+        OpenApiParameter(name='empresa_pk', description='ID da Empresa mãe', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+        OpenApiParameter(name='pk', description='ID da Filial', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+    ]
+)
 
 class FilialViewSet(viewsets.ModelViewSet):
     serializer_class = FilialSerializer

@@ -17,11 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_nested import routers
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from usuarios.auth_views import MyTokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 from empresa_filial.views import EmpresaViewSet, FilialViewSet
 from usuarios.views import UsuarioViewSet, GerenciaViewSet, FuncionarioViewSet
-from patrimonio.views import ImobiliarioViewSet, UtilitarioViewSet, VeiculoViewSet, PatrimonioDaFilialListView # Importa a view de listagem
+from patrimonio.views import ImobiliarioViewSet, UtilitarioViewSet, VeiculoViewSet, PatrimonioDaFilialListView
 
 
 router = routers.DefaultRouter()
@@ -46,6 +47,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(), name='redoc'),
     path('api/', include(router.urls)), 
     path('api/', include(filiais_router.urls)),
     path('api/', include(gestores_router.urls)),

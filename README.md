@@ -28,3 +28,9 @@ Além disso é possivel executar alguns comandos,
 *ou:*
 
 ```docker-compose run --rm tests```
+
+documentação da api: http://localhost:8000/api/schema/redoc/
+
+ou
+
+http://localhost:8000/api/schema/swagger-ui/

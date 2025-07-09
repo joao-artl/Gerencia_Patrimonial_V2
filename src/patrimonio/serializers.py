@@ -68,3 +68,11 @@ class UtilitarioPolimorficoSerializer(PatrimonioPolimorficoSerializer):
 class ImobiliarioPolimorficoSerializer(PatrimonioPolimorficoSerializer):
     class Meta(PatrimonioPolimorficoSerializer.Meta):
         model = Imobiliario
+
+class PatrimonioConsolidadoSerializer(serializers.Serializer):
+    """
+    Serializer usado apenas para documentar a resposta da API de listagem consolidada.
+    """
+    veiculos = VeiculoSerializer(many=True, read_only=True)
+    utilitarios = UtilitarioSerializer(many=True, read_only=True)
+    imobiliarios = ImobiliarioSerializer(many=True, read_only=True)

@@ -45,7 +45,7 @@ def cenario_gestor_com_empresa_populada(api_url):
     assert empresa_response.status_code == 201, f"Setup falhou: não criou empresa. Resposta: {empresa_response.text}"
     id_empresa = empresa_response.json()['id']
 
-    filial_a_data = { "cnpj": f"888{random.randint(10000000,99999999)}", "nome": "Filial A", "senha": "senha-a", "email":f"a{random.randint(1000,9999)}@a.com", "telefone": f"1198888{random.randint(1000,9999)}", "endereco": {"cep":"1", "estado":"a", "cidade":"b", "bairro":"c", "logradouro":"d", "numero":"e"}}
+    filial_a_data = { "cnpj": f"888{random.randint(10000000,99999999)}", "nome": "Filial A", "senha": "senha-a", "email":f"filiala{random.randint(1000,9999)}@a.com", "telefone": f"1198888{random.randint(1000,9999)}", "endereco": {"cep":"1", "estado":"a", "cidade":"b", "bairro":"c", "logradouro":"d", "numero":"e"}}
     filial_a_response = requests.post(f"{api_url}/empresas/{id_empresa}/filiais/", headers=headers_gestor, json=filial_a_data)
     assert filial_a_response.status_code == 201, f"Setup falhou: não criou a Filial A. Resposta: {filial_a_response.text}"
     id_filial_a = filial_a_response.json()['id']
@@ -58,7 +58,7 @@ def cenario_gestor_com_empresa_populada(api_url):
     r_utilitario_a = requests.post(f"{api_url}/empresas/{id_empresa}/filiais/{id_filial_a}/utilitarios/", headers=headers_gestor, json=utilitario_a_data)
     assert r_utilitario_a.status_code == 201, f"Setup falhou: não criou Utilitário na Filial A. Resposta: {r_utilitario_a.text}"
 
-    filial_b_data = { "cnpj": f"999{random.randint(10000000,99999999)}", "nome": "Filial B", "senha": "senha-b", "email":f"b{random.randint(1000,9999)}@b.com", "telefone": f"1199999{random.randint(1000,9999)}", "endereco": {"cep":"2", "estado":"b", "cidade":"c", "bairro":"d", "logradouro":"e", "numero":"f"}}
+    filial_b_data = { "cnpj": f"999{random.randint(10000000,99999999)}", "nome": "Filial B", "senha": "senha-b", "email":f"filialb{random.randint(1000,9999)}@b.com", "telefone": f"1199999{random.randint(1000,9999)}", "endereco": {"cep":"2", "estado":"b", "cidade":"c", "bairro":"d", "logradouro":"e", "numero":"f"}}
     filial_b_response = requests.post(f"{api_url}/empresas/{id_empresa}/filiais/", headers=headers_gestor, json=filial_b_data)
     assert filial_b_response.status_code == 201, f"Setup falhou: não criou a Filial B. Resposta: {filial_b_response.text}"
     id_filial_b = filial_b_response.json()['id']
