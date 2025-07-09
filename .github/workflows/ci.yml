@@ -2,43 +2,31 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test_and_validate_app:
+    name: Rodar Suíte de Testes
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout do repositório
       uses: actions/checkout@v4
 
-    - name: Construir imagens Docker
-      run: docker compose build db db_test web tests 
-
     - name: Rodar testes com Docker Compose
-      run: docker compose run --rm tests 
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DEBUG: "True"
+        ALLOWED_HOSTS: "localhost,127.0.0.1,web"
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        API_HOST: web
 
-    - name: Iniciar aplicação web e verificar estabilidade inicial
-      if: success()
-      run: |
-        echo "Iniciando os serviços 'db' e 'web'..."
-        docker compose up -d web 
-        WAIT_SECONDS=30 
-        echo "Aguardando ${WAIT_SECONDS} segundos para a aplicação web iniciar e estabilizar..."
-        sleep $WAIT_SECONDS
-        echo "Verificando o status do contêiner 'web'..."
-        if ! docker compose ps web | grep -q -E "Up|running"; then
-          echo "ERRO: Serviço web não está rodando ou saiu inesperadamente após ${WAIT_SECONDS} segundos."
-          echo "Logs do serviço web:"
-          docker compose logs web
-          echo "Status dos containers:"
-          docker compose ps
-          exit 1
-        fi
-        echo "Aplicação web iniciada com sucesso e permaneceu rodando."
+      run: docker compose up --build --abort-on-container-exit --exit-code-from tests
 
-    - name: Parar e remover contêineres, redes e volumes
+    - name: Parar e remover contêineres após a execução
       if: always()
-      run: docker compose down -v --remove-orphans 
+      run: docker compose down -v --remove-orphans

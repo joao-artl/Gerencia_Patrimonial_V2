@@ -1,28 +1,14 @@
 services:
   db:
     image: postgres:15
-    environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
-      POSTGRES_DB: gerenciapatrimonio
+    env_file:
+      - .env
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d gerenciapatrimonio"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  db_test:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: test_admin
-      POSTGRES_PASSWORD: test_admin
-      POSTGRES_DB: test_gerenciapatrimonio
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U test_admin -d test_gerenciapatrimonio"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -30,63 +16,35 @@ services:
   web:
     build: .
     command: >
-      sh -c "python manage.py wait_for_db &&
-            echo 'Running migrations...' &&
-            python manage.py migrate &&
-            echo 'Starting server...' &&
-            python manage.py runserver 0.0.0.0:8000"
+      sh -c "while ! nc -z db 5432; do sleep 1; done &&
+             echo 'Banco de dados pronto!' &&
+             python src/manage.py migrate &&
+             python src/manage.py runserver 0.0.0.0:8000"
     volumes:
-      - ./src:/app
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      - DATABASE_URL=postgres://admin:admin@db:5432/gerenciapatrimonio
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=gerenciapatrimonio
-      - DB_USER=admin
-      - DB_PASSWORD=admin
-      - TEST_DB_HOST=db_test
-      - TEST_DB_PORT=5432
-      - TEST_DB_NAME=test_gerenciapatrimonio
-      - TEST_DB_USER=test_admin
-      - TEST_DB_PASSWORD=test_admin
-      - DJANGO_SETTINGS_MODULE=configuracao.settings
-      - PYTHONUNBUFFERED=1
+    env_file:
+      - .env
 
   tests:
     build: .
     command: >
-      sh -c "python /app/tests/wait-for-service.py &&
-             echo 'Serviço web está pronto. Rodando suíte de testes...' &&
-             pytest"
+      sh -c "while ! nc -z web 8000; do sleep 1; done &&
+             echo 'API está no ar! Rodando suíte de testes...' &&
+             pytest tests/"
     volumes:
-      - ./src:/app/src
-      - ./tests:/app/tests
+      - .:/app
     depends_on:
       web:
         condition: service_started
-      db:
-        condition: service_healthy
     environment:
       - API_HOST=web
-      - DATABASE_URL=postgres://admin:admin@db:5432/gerenciapatrimonio
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=gerenciapatrimonio
-      - DB_USER=admin
-      - DB_PASSWORD=admin
-      - TEST_DB_HOST=db_test
-      - TEST_DB_PORT=5432
-      - TEST_DB_NAME=test_gerenciapatrimonio
-      - TEST_DB_USER=test_admin
-      - TEST_DB_PASSWORD=test_admin
-      - DJANGO_SETTINGS_MODULE=configuracao.settings
       - PYTHONUNBUFFERED=1
-
+      
   lint:
     build: .
     volumes:

@@ -1,0 +1,9 @@
+.env
+.env.*
+__pycache__/
+*.pyc
+db.sqlite3
+/htmlcov/
+.pytest_cache/
+.vscode/
+.idea/

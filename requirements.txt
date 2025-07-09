@@ -5,6 +5,9 @@ drf-nested-routers
 drf-spectacular
 pytest
 pytest-django
+gunicorn
+django-cors-headers
+whitenoise
 requests
 psycopg2-binary
 flake8

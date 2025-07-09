@@ -20,16 +20,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ar4u&zkw=0(7d2h90aoi%2ry@!xnm+2o&c4cn^pw19d-^j7okp'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if not SECRET_KEY:
+    raise ValueError("A variável de ambiente SECRET_KEY não foi definida. A aplicação não pode iniciar.")
 
-ALLOWED_HOSTS = ['web', 'localhost', '127.0.0.1']
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,web').split(',')
 
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -40,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
     'drf_spectacular',
     'empresa_filial',
     'usuarios',
@@ -49,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -82,22 +82,13 @@ WSGI_APPLICATION = 'configuracao.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gerenciapatrimonio',
-        'USER': 'admin',
-        'PASSWORD': 'admin',
-        'HOST': 'db',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'HOST': os.getenv('DB_HOST'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
-if 'test' in sys.argv or os.environ.get('DJANGO_TESTING') == 'True':
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('TEST_DB_NAME'),
-        'USER': os.environ.get('TEST_DB_USER'),
-        'PASSWORD': os.environ.get('TEST_DB_PASSWORD'),
-        'HOST': os.environ.get('TEST_DB_HOST'),
-        'PORT': os.environ.get('TEST_DB_PORT'),
-    }
 
 
 # Password validation
@@ -147,6 +138,15 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+if not DEBUG:
+    REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES'] = [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ]
+    REST_FRAMEWORK['DEFAULT_THROTTLE_RATES'] = {
+        'anon': '25/minute',
+        'user': '120/minute'
+    }
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
@@ -154,5 +154,10 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'API de Gerenciamento de Patrimônio V2',
     'DESCRIPTION': 'Documentação detalhada da API para gerenciar patrimônio de empresas.',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False, #
+    'SERVE_INCLUDE_SCHEMA': False,
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://possivelfrontend.com", # ambiente de produção
+]
