@@ -8,7 +8,7 @@ on:
 
 jobs:
   test_and_validate_app:
-    name: Rodar Suíte de Testes e Lint
+    name: Rodar Suíte de Testes
     runs-on: ubuntu-latest
 
     steps:
