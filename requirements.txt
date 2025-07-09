@@ -2,6 +2,7 @@ Django>=4.2
 djangorestframework
 djangorestframework-simplejwt
 drf-nested-routers
+drf-spectacular
 pytest
 pytest-django
 requests

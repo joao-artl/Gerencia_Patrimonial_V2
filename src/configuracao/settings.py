@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf_spectacular',
     'empresa_filial',
     'usuarios',
     'patrimonio',
@@ -143,7 +144,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API de Gerenciamento de Patrimônio V2',
+    'DESCRIPTION': 'Documentação detalhada da API para gerenciar patrimônio de empresas.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False, #
+}
