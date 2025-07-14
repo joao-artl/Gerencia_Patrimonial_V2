@@ -17,17 +17,14 @@ jobs:
 
     - name: Rodar testes com Docker Compose
       env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        DEBUG: "True"
-        ALLOWED_HOSTS: "localhost,127.0.0.1,web"
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        DB_HOST: db 
-        DB_PORT: 5432
-        DB_NAME: ${{ secrets.POSTGRES_DB }}
-        DB_USER: ${{ secrets.POSTGRES_USER }}
-        DB_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DEBUG: "False"
+          ALLOWED_HOSTS: "localhost,127.0.0.1,web"
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          DATABASE_URL: "postgres://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@db:5432/${{ secrets.POSTGRES_DB }}"
+          API_HOST: web
       run: docker compose up --build --abort-on-container-exit --exit-code-from tests
 
     - name: Parar e remover contêineres após a execução

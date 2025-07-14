@@ -5,6 +5,8 @@ drf-nested-routers
 drf-spectacular
 pytest
 pytest-django
+dj-database-url
+python-decouple
 gunicorn
 django-cors-headers
 whitenoise
