@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.apps import apps
+from django.contrib.auth.hashers import make_password
 
 
 class Endereco(models.Model):
@@ -39,6 +40,9 @@ class Empresa(models.Model):
     telefone = models.CharField(max_length=11, unique=True, verbose_name="Telefone")
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
     gestores = models.ManyToManyField('usuarios.Usuario', through='Gerencia', related_name='empresa_administrada')
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
 
     def clean(self):
         if self.telefone:
@@ -106,6 +110,9 @@ class Filial(models.Model):
     endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
     empresa_matriz = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='filiais')
 
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        
     def clean(self):
         if self.telefone:
             empresa_telefone = Empresa.objects.filter(telefone=self.telefone).exists()
