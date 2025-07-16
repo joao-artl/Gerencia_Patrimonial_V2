@@ -14,7 +14,6 @@ class Endereco(models.Model):
     numero = models.CharField(max_length=10, blank=True, null=True, verbose_name="Número (Opcional)")
 
     class Meta:
-        unique_together = (('logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'cep'),)
         verbose_name="Endereço"
         verbose_name_plural="Endereços"
 
