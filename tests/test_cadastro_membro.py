@@ -100,23 +100,25 @@ def test_gestor_adiciona_funcionario_com_sucesso(api_url, gestor_fundador_com_em
 
 def test_gestor_adiciona_outro_gestor_com_sucesso(api_url, gestor_fundador_com_empresa_e_filial, gestor_independente):
     """
-    Garante que um gestor pode adicionar outro gestor à sua empresa.
+    Garante que um gestor pode adicionar outro gestor à sua empresa
     """
-    
-    setup_data = gestor_fundador_com_empresa_e_filial
-    id_empresa = setup_data['id_empresa']
-    token_fundador = setup_data['token_gestor']
-    senha_empresa = setup_data['senha_da_empresa']
-    
-    id_gestor_a_adicionar = gestor_independente['id']
 
-    url = f"{api_url}/empresas/{id_empresa}/gestores/"
-    headers = {'Authorization': f'Bearer {token_fundador}'}
+    setup_fundador = gestor_fundador_com_empresa_e_filial
+    token_do_ator = setup_fundador['token_gestor']
+    id_da_empresa_alvo = setup_fundador['id_empresa']
+    senha_da_empresa_alvo = setup_fundador['senha_da_empresa']
+    dados_gestor_a_adicionar = gestor_independente
+    email_a_adicionar = dados_gestor_a_adicionar['email']
+
+    url = f"{api_url}/empresas/{id_da_empresa_alvo}/gestores/"
+    headers = {'Authorization': f'Bearer {token_do_ator}'}
+    
     data = {
-        "usuario_id": id_gestor_a_adicionar,
-        "senha_da_empresa": senha_empresa
+        "usuario_email": email_a_adicionar,
+        "senha_da_empresa": senha_da_empresa_alvo
     }
-    response = requests.post(url, headers=headers, json=data)
 
+    response = requests.post(url, headers=headers, json=data)
     assert response.status_code == 201, f"Erro ao adicionar gestor: {response.text}"
-    assert response.json()['usuario']['id'] == id_gestor_a_adicionar
+    response_data = response.json()
+    assert response_data['usuario']['email'] == email_a_adicionar

@@ -60,36 +60,43 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 class GerenciaSerializer(serializers.ModelSerializer):
-    usuario = UsuarioSerializer(read_only=True)
-    usuario_id = serializers.PrimaryKeyRelatedField(
-        queryset=Usuario.objects.filter(tipo_usuario='GESTOR'),
-        source='usuario',
-        write_only=True,
-        label="ID do Gestor"
-    )
 
-    senha_da_empresa = serializers.CharField(
-        write_only=True,
-        label="Senha da Empresa"
-    )
+    usuario_email = serializers.EmailField(write_only=True)
+    senha_da_empresa = serializers.CharField(write_only=True)
+    usuario = UsuarioSerializer(read_only=True)
 
     class Meta:
         model = Gerencia
-        fields = ['id', 'usuario', 'empresa', 'usuario_id', 'senha_da_empresa']
+        fields = ['id', 'usuario', 'empresa', 'usuario_email', 'senha_da_empresa']
         read_only_fields = ('empresa',)
 
     def validate(self, data):
+
         view = self.context.get('view')
         empresa_pk = view.kwargs.get('empresa_pk')
         try:
             empresa = Empresa.objects.get(pk=empresa_pk)
         except Empresa.DoesNotExist:
             raise serializers.ValidationError("A empresa especificada não existe.")
-
+        
         senha_empresa_submetida = data.get('senha_da_empresa')
-
         if not check_password(senha_empresa_submetida, empresa.password):
             raise serializers.ValidationError({"senha_da_empresa": "A senha da empresa está incorreta."})
+        
+        try:
+            Usuario.objects.get(email=data['usuario_email'], tipo_usuario='GESTOR')
+        except Usuario.DoesNotExist:
+            raise serializers.ValidationError({"usuario_email": "Nenhum gestor encontrado com este email."})
 
         data.pop('senha_da_empresa')
         return data
+
+    def create(self, validated_data):
+
+        usuario_obj = Usuario.objects.get(email=validated_data['usuario_email'])
+        empresa_id_da_url = validated_data['empresa_id']
+        gerencia = Gerencia.objects.create(
+            usuario=usuario_obj,
+            empresa_id=empresa_id_da_url
+        )
+        return gerencia
