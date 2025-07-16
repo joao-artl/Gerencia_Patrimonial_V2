@@ -92,3 +92,11 @@ class JoinEmpresaSerializer(serializers.Serializer):
 
     class Meta:
         fields = ['senha_da_empresa']
+
+class JoinByEmailSerializer(serializers.Serializer):
+
+    email = serializers.EmailField()
+    senha = serializers.CharField(write_only=True)
+
+    class Meta:
+        fields = ['email', 'senha']

@@ -122,3 +122,42 @@ def test_gestor_adiciona_outro_gestor_com_sucesso(api_url, gestor_fundador_com_e
     assert response.status_code == 201, f"Erro ao adicionar gestor: {response.text}"
     response_data = response.json()
     assert response_data['usuario']['email'] == email_a_adicionar
+
+def test_gestor_independente_se_conecta_por_email(api_url):
+    """
+    Garante que um gestor pode se conectar a uma empresa usando o email e a senha da empresa.
+    """
+
+    empresa_data = {
+        "cnpj": f"12121212{random.randint(10000,99999)}", "nome": "Empresa Alvo Para Join", 
+        "email": f"contato.alvo.{random.randint(1000,9999)}@empresa.com", "telefone": f"1191212{random.randint(1000,9999)}",
+        "senha": "senha-secreta-da-empresa-alvo",
+        "endereco": {"cep": "3", "estado": "c", "cidade": "d", "bairro": "e", "logradouro": "f", "numero": "g"}
+    }
+
+    gestor_temporario_data = {"email": f"temp.{random.randint(1000,9999)}@temp.com", "senha": "123", "cpf": f"131{random.randint(10000,99999)}", "nome":"T", "tipo_usuario":"GESTOR"}
+    requests.post(f"{api_url}/usuarios/", json=gestor_temporario_data)
+    login_temp_res = requests.post(f"{api_url}/token/", json={"email": gestor_temporario_data['email'], "senha": gestor_temporario_data['senha']})
+    headers_temp = {'Authorization': f'Bearer {login_temp_res.json()["access"]}'}
+    requests.post(f"{api_url}/empresas/", headers=headers_temp, json=empresa_data)
+
+    gestor_join_data = {
+        "cpf": f"30405060{random.randint(10000,99999)}",
+        "email": f"gestor.join.{random.randint(1000,9999)}@empresa.com",
+        "nome": "Gestor que quer entrar", "senha": "senhaDoJoin", "tipo_usuario": "GESTOR"
+    }
+    requests.post(f"{api_url}/usuarios/", json=gestor_join_data)
+    
+    login_join_res = requests.post(f"{api_url}/token/", json={"email": gestor_join_data['email'], "senha": gestor_join_data['senha']})
+    token_gestor_join = login_join_res.json()['access']
+    headers_join = {'Authorization': f'Bearer {token_gestor_join}'}
+
+    url = f"{api_url}/empresas/join-by-email/"
+    data = {
+        "email": empresa_data['email'],
+        "senha": empresa_data['senha']
+    }
+    response = requests.post(url, headers=headers_join, json=data)
+
+    assert response.status_code == 200, f"Erro ao tentar se conectar à empresa: {response.text}"
+    assert "adicionado com sucesso" in response.json()['message']

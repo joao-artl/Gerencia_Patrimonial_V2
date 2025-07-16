@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.contrib.auth.hashers import check_password
 from django.db.models import Q
 from .models import Empresa, Filial, Gerencia 
-from .serializers import EmpresaSerializer, FilialSerializer, JoinEmpresaSerializer 
+from .serializers import EmpresaSerializer, FilialSerializer, JoinEmpresaSerializer, JoinByEmailSerializer 
 from patrimonio.models import Veiculo, Utilitario, Imobiliario
 from patrimonio.serializers import VeiculoSerializer, UtilitarioSerializer, ImobiliarioSerializer
 from usuarios.permissions import IsGestor, IsManagerOfParentCompany
@@ -103,6 +103,35 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         )
         serializer = UsuarioSerializer(funcionarios_da_empresa, many=True)
         return Response(serializer.data)
+    
+
+    @action(detail=False, methods=['post'], url_path='join-by-email', permission_classes=[IsAuthenticated, IsGestor])
+    def join_by_email(self, request):
+
+        serializer = JoinByEmailSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email_empresa = serializer.validated_data['email']
+        senha_submetida = serializer.validated_data['senha']
+        gestor = request.user
+
+        try:
+            empresa = Empresa.objects.get(email=email_empresa)
+        except Empresa.DoesNotExist:
+            return Response({'error': 'Nenhuma empresa encontrada com este email.'}, status=status.HTTP_404_NOT_FOUND)
+
+        if not check_password(senha_submetida, empresa.password):
+            return Response({'error': 'A senha da empresa está incorreta.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if Gerencia.objects.filter(empresa=empresa, usuario=gestor).exists():
+            return Response({'message': 'Você já é um gestor desta empresa.'}, status=status.HTTP_200_OK)
+
+        Gerencia.objects.create(empresa=empresa, usuario=gestor)
+
+        return Response(
+            {'message': f'Você foi adicionado com sucesso como gestor da empresa {empresa.nome}.'},
+            status=status.HTTP_200_OK
+        )
 
 @extend_schema(
     parameters=[
