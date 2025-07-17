@@ -67,7 +67,7 @@ def cenario_gestor_com_empresa_populada(api_url):
     r_utilitario_b = requests.post(f"{api_url}/empresas/{id_empresa}/filiais/{id_filial_b}/utilitarios/", headers=headers_gestor, json=utilitario_b_data)
     assert r_utilitario_b.status_code == 201, f"Setup falhou: não criou Utilitário na Filial B. Resposta: {r_utilitario_b.text}"
 
-    func_data = {"cpf": f"121{random.randint(10000,99999)}", "email": f"func.l5.{random.randint(1000,9999)}@empresa.com", "nome": "Funcionario L5", "senha": "senhaDoFuncionario", "tipo_usuario": "FUNCIONARIO", "filial_associada": id_filial_a, "senha_da_filial": "senha-a"}
+    func_data = {"cpf": f"121{random.randint(10000,99999)}", "email": f"func.l5.{random.randint(1000,9999)}@empresa.com", "nome": "Funcionario L5", "senha": "senhaDoFuncionario", "tipo_usuario": "FUNCIONARIO", "filial_associada_id": id_filial_a, "senha_da_filial": "senha-a"}
     response_func = requests.post(f"{api_url}/usuarios/", headers=headers_gestor, json=func_data)
     assert response_func.status_code == 201, f"Setup falhou: não criou o funcionário. Resposta: {response_func.text}"
 

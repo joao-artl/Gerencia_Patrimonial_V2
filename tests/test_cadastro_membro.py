@@ -91,7 +91,7 @@ def test_gestor_adiciona_funcionario_com_sucesso(api_url, gestor_fundador_com_em
         "nome": "Funcionario Contratado",
         "senha": "senhaDoFuncionario",
         "tipo_usuario": "FUNCIONARIO",
-        "filial_associada": setup_data['id_filial'],
+        "filial_associada_id": setup_data['id_filial'],
         "senha_da_filial": setup_data['senha_da_filial']
     }
     response = requests.post(url, headers=headers, json=funcionario_data)

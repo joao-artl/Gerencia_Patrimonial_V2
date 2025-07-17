@@ -30,7 +30,7 @@ def cenario_com_funcionario_logado(api_url):
     filial_response = requests.post(f"{api_url}/empresas/{id_empresa}/filiais/", headers=headers_gestor, json=filial_data)
     id_filial = filial_response.json()['id']
 
-    funcionario_data = { "cpf": f"444{random.randint(10000,99999)}", "email": f"func.l6.{random.randint(1000,9999)}@empresa.com", "nome": "Funcionario L6", "senha": "senhaDoFuncionario", "tipo_usuario": "FUNCIONARIO", "filial_associada": id_filial, "senha_da_filial": "senha-filial" }
+    funcionario_data = { "cpf": f"444{random.randint(10000,99999)}", "email": f"func.l6.{random.randint(1000,9999)}@empresa.com", "nome": "Funcionario L6", "senha": "senhaDoFuncionario", "tipo_usuario": "FUNCIONARIO", "filial_associada_id": id_filial, "senha_da_filial": "senha-filial" }
     requests.post(f"{api_url}/usuarios/", headers=headers_gestor, json=funcionario_data)
 
 
@@ -66,7 +66,7 @@ def cenario_duas_empresas(api_url):
     filial_b_data = { "cnpj": f"555{random.randint(10000000,99999999)}", "nome": "Filial B", "senha": "s", "email":f"b{random.randint(1000,9999)}@b.com", "telefone": f"1195555{random.randint(1000,9999)}", "endereco": {"cep":"5","estado":"e","cidade":"f","bairro":"g","logradouro":"h","numero":"i"}}
     filial_b_response = requests.post(f"{api_url}/empresas/{id_empresa_b}/filiais/", headers=headers_gestor_b, json=filial_b_data)
     id_filial_b = filial_b_response.json()['id']
-    func_b_data = {"cpf": f"555{random.randint(10000,99999)}", "email": f"func.b.{random.randint(1000,9999)}@empresa.com", "nome": "Func B", "senha": "123", "tipo_usuario": "FUNCIONARIO", "filial_associada": id_filial_b, "senha_da_filial": "s"}
+    func_b_data = {"cpf": f"555{random.randint(10000,99999)}", "email": f"func.b.{random.randint(1000,9999)}@empresa.com", "nome": "Func B", "senha": "123", "tipo_usuario": "FUNCIONARIO", "filial_associada_id": id_filial_b, "senha_da_filial": "s"}
     requests.post(f"{api_url}/usuarios/", headers=headers_gestor_b, json=func_b_data)
     
     return {"token_gestor_a": token_gestor_a, "id_empresa_b": id_empresa_b}
