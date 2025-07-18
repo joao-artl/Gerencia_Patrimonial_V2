@@ -3,35 +3,31 @@ from django.contrib.auth.hashers import check_password
 from .models import Usuario
 from empresa_filial.models import Gerencia, Filial, Empresa
 
-class FilialInfoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Filial
-        fields = ['id', 'nome', 'empresa_matriz']
-
 class UsuarioSerializer(serializers.ModelSerializer):
     
-    filial_associada = FilialInfoSerializer(read_only=True)
-    filial_associada_id = serializers.PrimaryKeyRelatedField(
+    filial_associada = serializers.PrimaryKeyRelatedField(
         queryset=Filial.objects.all(),
-        source='filial_associada',
-        write_only=True,
         required=False,
         allow_null=True,
         label="ID da Filial Associada"
     )
 
-    senha_da_filial = serializers.CharField(write_only=True, required=False)
-    senha = serializers.CharField(source='password', write_only=True)
+    senha_da_filial = serializers.CharField(
+        write_only=True,
+        required=False,
+        label="Senha da Filial"
+    )
+
+    senha = serializers.CharField(
+        source='password', 
+        write_only=True, 
+        style={'input_type': 'password'}
+    )
 
     class Meta:
         model = Usuario
-        fields = [
-            'id', 'cpf', 'email', 'nome', 'tipo_usuario', 
-            'filial_associada',      
-            'filial_associada_id',   
-            'senha_da_filial',
-            'senha'
-        ]
+        fields = ['id', 'cpf', 'email', 'nome', 'senha', 'tipo_usuario', 'filial_associada', 'senha_da_filial']
+
     def validate(self, data):
         tipo_usuario = data.get('tipo_usuario')
         filial_associada_obj = data.get('filial_associada')

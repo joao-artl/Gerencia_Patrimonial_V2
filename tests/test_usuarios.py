@@ -41,7 +41,7 @@ def test_criar_funcionario_publicamente_falha(api_url):
         "nome": "Funcionário com Falha",
         "senha": "senha123",
         "tipo_usuario": "FUNCIONARIO",
-        "filial_associada_id": 99, 
+        "filial_associada": 99, 
         "senha_da_filial": "senhaqualquer"
     }
     response = requests.post(url, json=data)

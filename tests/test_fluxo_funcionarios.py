@@ -45,7 +45,7 @@ def cenario_com_funcionario(api_url):
     funcionario_data = {
         "cpf": f"444{random.randint(10000,99999)}", "email": f"func.l4.{random.randint(1000,9999)}@empresa.com",
         "nome": "Funcionario L4", "senha": "senhaDoFuncionario", "tipo_usuario": "FUNCIONARIO",
-        "filial_associada_id": id_filial_a, "senha_da_filial": "senha-filial-a"
+        "filial_associada": id_filial_a, "senha_da_filial": "senha-filial-a"
     }
     requests.post(f"{api_url}/usuarios/", headers=headers_gestor, json=funcionario_data)
 
