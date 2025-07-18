@@ -146,5 +146,5 @@ SPECTACULAR_SETTINGS = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://possivelfrontend.com", # ambiente de produção
+    "https://gerencia-patrimonial.vercel.app/",
 ]
