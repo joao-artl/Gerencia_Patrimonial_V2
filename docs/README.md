@@ -1,30 +1,72 @@
-# Gerencia Patrimonial V2
-documentos do projeto:
-- [Padrão de contribuição](https://joao-artl.github.io/Gerencia_Patrimonial_V2/#/./padraoCommit)
-- [Backlog](https://joao-artl.github.io/Gerencia_Patrimonial_V2/#/./backlog)
-- [UML](https://joao-artl.github.io/Gerencia_Patrimonial_V2/#/./uml)
-- [Diagrama Físico](https://joao-artl.github.io/Gerencia_Patrimonial_V2/#/./modelagemBanco)
+# Gerência Patrimonial V2 - Sistema de Gestão de Empresa e Filiais
 
-## Como rodar
+## 📖 Sobre o Projeto
 
-Na raiz do projeto:
-```docker-compose up --build```
+**Gerência Patrimonial V2** é uma aplicação Full-Stack completa para gestão de patrimônio empresarial. A plataforma permite que gestores se cadastrem, criem suas empresas, filiais e contratem funcionários.
 
-Para rodar sem o Lint:
-```docker-compose up --build db db_test web tests```
+Este projeto foi desenvolvido utilizando as melhores práticas de desenvolvimento, desde a conteinerização com Docker até a integração contínua
 
-Com isso será possivel acessar http://localhost:8000
+[Link para a aplicação](https://gerencia-patrimonial.vercel.app/)
 
-Além disso é possivel executar alguns comandos, 
+[Link para documentação da API](https://gerencia-patrimonial-api.onrender.com/api/schema/swagger-ui/)
 
-*Para acessar o banco de dados:*
+[Link para documentação dos artefatos](https://joao-artl.github.io/Gerencia_Patrimonial_V2/)
 
-```docker-compose exec db psql -U admin -d gerenciapatrimonio```
+## ✨ Funcionalidades Principais
 
-*Para rodar os testes pode ser usado um dos comandos a seguir:*
+* **Autenticação Segura:** Sistema de login e cadastro com tokens JWT (Access & Refresh Tokens).
+* **Gerenciamento de Entidades:** CRUD completo para Empresas, Filiais e Funcionários.
+* **Gestão de Patrimônio:** Cadastro e gerenciamento de múltiplos tipos de patrimônios (Imóveis, Veículos, Utilitários) associados a cada filial.
+* **Dashboards Dinâmicos:** Visões gerais para gestores com dados consolidados de toda a empresa.
+* **Busca e Filtros:** Funcionalidades de busca e filtro em todas as listagens principais.
+* **Documentação de API:** Documentação interativa gerada automaticamente com Swagger/OpenAPI.
 
-```docker-compose exec web python manage.py test```
+## 🛠️ Tecnologias Utilizadas
 
-*ou:*
+| Categoria | Tecnologia |
+| :--- | :--- |
+| **Backend** | Django, Django REST Framework, Simple JWT, Gunicorn, WhiteNoise |
+| **Frontend**| Next.js, React, TypeScript, Axios, Tailwind CSS |
+| **Banco de Dados**| PostgreSQL |
+| **DevOps & Infra**| Docker, Docker Compose, Vercel (Frontend), Render (Backend) |
+| **Testes** | Pytest, Selenium (Testes E2E), Requests (Testes de API) |
+| **Documentação**| drf-spectacular (Swagger UI / ReDoc), Docsify |
 
-```docker-compose run --rm tests```
+
+## 🚀 Como Rodar Localmente (Backend)
+
+O ambiente de desenvolvimento do backend é totalmente conteinerizado com Docker.
+
+1.  **Pré-requisitos:**
+    * [Docker](https://www.docker.com/products/docker-desktop/)
+    * [Docker Compose](https://docs.docker.com/compose/install/)
+
+2.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/joao-artl/Gerencia_Patrimonial_V2.git
+    cd Gerencia_Patrimonial_V2
+    ```
+
+3.  **Crie o arquivo de ambiente:**
+    * Crie uma cópia do arquivo `.env.example` e renomeie para `.env`.
+    * Preencha as variáveis, como a `SECRET_KEY`.
+
+4.  **Suba os containers:**
+    ```bash
+    docker-compose up --build
+    ```
+
+5.  **Acesso:**
+    * A API estará disponível em: `http://localhost:8000/api/`
+    * A documentação interativa (Swagger UI) estará em: `http://localhost:8000/api/schema/swagger-ui/`
+
+7.  **Para rodar o linter**
+    ```bash
+    docker compose --profile tools run --rm lint
+    ```
+
+
+7.  **Para parar os containers:**
+    ```bash
+    docker compose down -v
+    ```
