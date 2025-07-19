@@ -12,6 +12,8 @@ Este projeto foi desenvolvido utilizando as melhores práticas de desenvolviment
 
 [Link para documentação dos artefatos](https://joao-artl.github.io/Gerencia_Patrimonial_V2/)
 
+[Link para repositório do Front-End](https://github.com/joao-artl/Gerencia_Patrimonial_V2_Front_End)
+
 ## ✨ Funcionalidades Principais
 
 * **Autenticação Segura:** Sistema de login e cadastro com tokens JWT (Access & Refresh Tokens).
@@ -44,7 +46,7 @@ O ambiente de desenvolvimento do backend é totalmente conteinerizado com Docker
 2.  **Clone o repositório:**
     ```bash
     git clone https://github.com/joao-artl/Gerencia_Patrimonial_V2.git
-    cd Gerencia_Patrimonial_V2
+    cd Gerencia_Patrimonial_V2/
     ```
 
 3.  **Crie o arquivo de ambiente:**
@@ -60,7 +62,7 @@ O ambiente de desenvolvimento do backend é totalmente conteinerizado com Docker
     * A API estará disponível em: `http://localhost:8000/api/`
     * A documentação interativa (Swagger UI) estará em: `http://localhost:8000/api/schema/swagger-ui/`
 
-7.  **Para rodar o linter**
+6.  **Para rodar o linter**
     ```bash
     docker compose --profile tools run --rm lint
     ```
