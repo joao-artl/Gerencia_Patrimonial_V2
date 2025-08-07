@@ -4,8 +4,14 @@ from rest_framework.response import Response
 from .models import Usuario
 from empresa_filial.models import Gerencia, Filial
 from .serializers import UsuarioSerializer, GerenciaSerializer
-from empresa_filial.serializers import EmpresaSerializer, FilialSerializer 
-from .permissions import IsOwner, UserCreationPermission, IsEmployeeOfThisBranchOrManager, IsGestor, IsOwnerOrGestor
+from empresa_filial.serializers import EmpresaSerializer, FilialSerializer
+from .permissions import (
+    IsOwner, 
+    UserCreationPermission, 
+    IsEmployeeOfThisBranchOrManager, 
+    IsGestor, 
+    IsOwnerOrManagerOfSameCompany
+)
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
@@ -15,9 +21,8 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     serializer_class = UsuarioSerializer
     
     def get_permissions(self):
-
         if self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [permissions.IsAuthenticated, IsOwnerOrGestor]
+            permission_classes = [permissions.IsAuthenticated, IsOwnerOrManagerOfSameCompany]
         elif self.action in ['empresas_gerenciadas', 'filiais_acessiveis']:
             permission_classes = [permissions.IsAuthenticated, IsOwner, IsGestor]
         elif self.action == 'create':
@@ -36,7 +41,6 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], url_path='filiais')
     def filiais_acessiveis(self, request, pk=None):
-
         gestor = self.get_object()
         ids_empresas_gerenciadas = gestor.empresa_administrada.values_list('id', flat=True)
         filiais = Filial.objects.filter(empresa_matriz_id__in=ids_empresas_gerenciadas)
@@ -50,9 +54,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         OpenApiParameter(name='pk', description='ID do Funcionário', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
     ]
 )
-
 class FuncionarioViewSet(viewsets.ReadOnlyModelViewSet):
-
     serializer_class = UsuarioSerializer
     permission_classes = [permissions.IsAuthenticated, IsEmployeeOfThisBranchOrManager]
     
@@ -68,9 +70,7 @@ class FuncionarioViewSet(viewsets.ReadOnlyModelViewSet):
         OpenApiParameter(name='pk', description='ID da associação de Gerência', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
     ]
 )
-
 class GerenciaViewSet(viewsets.ModelViewSet):
-
     serializer_class = GerenciaSerializer
     permission_classes = [permissions.IsAuthenticated, IsGestor]
 

@@ -14,15 +14,6 @@ class IsGestor(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and request.user.tipo_usuario == 'GESTOR'
 
-class IsOwnerOrGestor(permissions.BasePermission):
-    message = "Apenas o próprio usuário ou um gestor pode realizar essa ação."
-
-    def has_object_permission(self, request, view, obj):
-        return (
-            request.user == obj
-            or request.user.tipo_usuario == 'GESTOR'
-        )
-
 class IsEmployeeOfThisBranchOrManager(permissions.BasePermission):
     message = "Você não tem permissão para acessar os recursos desta filial."
 
@@ -62,9 +53,6 @@ class UserCreationPermission(permissions.BasePermission):
         
         return False
     
-
-    from rest_framework import permissions
-
 class IsManagerOfParentCompany(permissions.BasePermission):
 
     message = "Você precisa ser um gestor desta empresa para realizar esta ação."
@@ -81,3 +69,21 @@ class IsManagerOfParentCompany(permissions.BasePermission):
             return True
 
         return user.tipo_usuario == 'GESTOR' and user.empresa_administrada.filter(pk=empresa_pk).exists()
+
+class IsOwnerOrManagerOfSameCompany(permissions.BasePermission):
+
+    message = "Você não tem permissão para realizar esta ação neste usuário."
+
+    def has_object_permission(self, request, view, obj):
+        if request.user == obj:
+            return True
+
+        is_gestor = request.user.is_authenticated and request.user.tipo_usuario == 'GESTOR'
+        is_target_funcionario = obj.tipo_usuario == 'FUNCIONARIO' and obj.filial_associada is not None
+
+        if is_gestor and is_target_funcionario:
+            empresa_do_funcionario = obj.filial_associada.empresa_matriz
+            
+            return request.user.empresa_administrada.filter(pk=empresa_do_funcionario.pk).exists()
+
+        return False
