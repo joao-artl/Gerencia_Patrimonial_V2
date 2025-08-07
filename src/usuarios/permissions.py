@@ -14,6 +14,15 @@ class IsGestor(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user and request.user.is_authenticated and request.user.tipo_usuario == 'GESTOR'
 
+class IsOwnerOrGestor(permissions.BasePermission):
+    message = "Apenas o próprio usuário ou um gestor pode realizar essa ação."
+
+    def has_object_permission(self, request, view, obj):
+        return (
+            request.user == obj
+            or request.user.tipo_usuario == 'GESTOR'
+        )
+
 class IsEmployeeOfThisBranchOrManager(permissions.BasePermission):
     message = "Você não tem permissão para acessar os recursos desta filial."
 

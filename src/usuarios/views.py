@@ -5,7 +5,7 @@ from .models import Usuario
 from empresa_filial.models import Gerencia, Filial
 from .serializers import UsuarioSerializer, GerenciaSerializer
 from empresa_filial.serializers import EmpresaSerializer, FilialSerializer 
-from .permissions import IsOwner, UserCreationPermission, IsEmployeeOfThisBranchOrManager, IsGestor
+from .permissions import IsOwner, UserCreationPermission, IsEmployeeOfThisBranchOrManager, IsGestor, IsOwnerOrGestor
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
@@ -17,7 +17,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
 
         if self.action in ['update', 'partial_update', 'destroy']:
-            permission_classes = [permissions.IsAuthenticated, IsOwner]
+            permission_classes = [permissions.IsAuthenticated, IsOwnerOrGestor]
         elif self.action in ['empresas_gerenciadas', 'filiais_acessiveis']:
             permission_classes = [permissions.IsAuthenticated, IsOwner, IsGestor]
         elif self.action == 'create':
