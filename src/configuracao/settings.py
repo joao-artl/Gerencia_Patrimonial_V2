@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import sys
 from pathlib import Path
+from datetime import timedelta
 import dj_database_url
 from decouple import config, Csv
 
@@ -134,6 +135,15 @@ if not DEBUG:
         'anon': '100/minute',
         'user': '250/minute'
     }
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+}
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
