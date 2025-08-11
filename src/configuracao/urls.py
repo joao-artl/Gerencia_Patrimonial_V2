@@ -23,7 +23,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from empresa_filial.views import EmpresaViewSet, FilialViewSet
 from usuarios.views import UsuarioViewSet, GerenciaViewSet, FuncionarioViewSet
 from patrimonio.views import ImobiliarioViewSet, UtilitarioViewSet, VeiculoViewSet, PatrimonioDaFilialListView
-from src.keep_alive import keep_alive_view
+from keep_alive import keep_alive_view
 
 
 router = routers.DefaultRouter()
