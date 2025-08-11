@@ -23,6 +23,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from empresa_filial.views import EmpresaViewSet, FilialViewSet
 from usuarios.views import UsuarioViewSet, GerenciaViewSet, FuncionarioViewSet
 from patrimonio.views import ImobiliarioViewSet, UtilitarioViewSet, VeiculoViewSet, PatrimonioDaFilialListView
+from src.keep_alive import keep_alive_view
 
 
 router = routers.DefaultRouter()
@@ -45,6 +46,7 @@ imobiliarios_router.register(r'imobiliarios', ImobiliarioViewSet, basename='fili
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/keep-alive/', keep_alive_view, name='keep_alive'),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
