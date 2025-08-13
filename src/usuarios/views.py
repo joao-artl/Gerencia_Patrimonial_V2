@@ -1,4 +1,4 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Usuario
@@ -46,6 +46,22 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         filiais = Filial.objects.filter(empresa_matriz_id__in=ids_empresas_gerenciadas)
         serializer = FilialSerializer(filiais, many=True)
         return Response(serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        user_to_delete = self.get_object() 
+        password = request.data.get('senha')
+        if not password:
+            return Response(
+                {'error': 'A senha é obrigatória para confirmar a exclusão.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if not user_to_delete.check_password(password):
+            return Response(
+                {'error': 'A senha informada está incorreta.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        self.perform_destroy(user_to_delete)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @extend_schema(
     parameters=[
