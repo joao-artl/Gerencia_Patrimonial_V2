@@ -21,7 +21,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     serializer_class = UsuarioSerializer
     
     def get_permissions(self):
-        if self.action in ['update', 'partial_update', 'destroy']:
+        if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAuthenticated, IsOwnerOrManagerOfSameCompany]
         elif self.action in ['empresas_gerenciadas', 'filiais_acessiveis']:
             permission_classes = [permissions.IsAuthenticated, IsOwner, IsGestor]
