@@ -66,7 +66,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
                 if empresa.gestores.count() == 1:
                     empresa.delete()
         self.perform_destroy(user_to_delete)
-        return Response(status=status.HTTP_2_4_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 @extend_schema(
     parameters=[
