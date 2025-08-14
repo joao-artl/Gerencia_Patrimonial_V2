@@ -48,7 +48,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def destroy(self, request, *args, **kwargs):
-        user_to_delete = self.get_object() 
+        user_to_delete = self.get_object()
         password = request.data.get('senha')
         if not password:
             return Response(
@@ -60,8 +60,13 @@ class UsuarioViewSet(viewsets.ModelViewSet):
                 {'error': 'A senha informada está incorreta.'},
                 status=status.HTTP_403_FORBIDDEN
             )
+        if user_to_delete.tipo_usuario == 'GESTOR':
+            empresas_gerenciadas = user_to_delete.empresa_administrada.all()
+            for empresa in empresas_gerenciadas:
+                if empresa.gestores.count() == 1:
+                    empresa.delete()
         self.perform_destroy(user_to_delete)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_2_4_NO_CONTENT)
 
 @extend_schema(
     parameters=[
