@@ -17,32 +17,52 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_nested import routers
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import SpectacularAPIView
+from drf_spectacular.views import SpectacularRedocView, SpectacularSwaggerView
 from usuarios.auth_views import MyTokenObtainPairView
 from rest_framework_simplejwt.views import TokenRefreshView
 from empresa_filial.views import EmpresaViewSet, FilialViewSet
 from usuarios.views import UsuarioViewSet, GerenciaViewSet, FuncionarioViewSet
-from patrimonio.views import ImobiliarioViewSet, UtilitarioViewSet, VeiculoViewSet, PatrimonioDaFilialListView
+from patrimonio.views import ImobiliarioViewSet, UtilitarioViewSet
+from patrimonio.views import VeiculoViewSet, PatrimonioDaFilialListView
 from keep_alive import keep_alive_view
 
 
 router = routers.DefaultRouter()
 router.register(r'usuarios', UsuarioViewSet, basename='usuario')
-router.register(r'empresas', EmpresaViewSet, basename='empresa') 
+router.register(r'empresas', EmpresaViewSet, basename='empresa')
 
 filiais_router = routers.NestedSimpleRouter(router, r'empresas', lookup='empresa')
 filiais_router.register(r'filiais', FilialViewSet, basename='empresa-filiais')
 gestores_router = routers.NestedSimpleRouter(router, r'empresas', lookup='empresa')
 gestores_router.register(r'gestores', GerenciaViewSet, basename='empresa-gestores')
 
-funcionarios_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
-funcionarios_router.register(r'funcionarios', FuncionarioViewSet, basename='filial-funcionarios')
+funcionarios_router = routers.NestedSimpleRouter(filiais_router,
+                                                 r'filiais',
+                                                 lookup='filial'
+                                                 )
+funcionarios_router.register(r'funcionarios',
+                             FuncionarioViewSet,
+                             basename='filial-funcionarios'
+                             )
 veiculos_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
 veiculos_router.register(r'veiculos', VeiculoViewSet, basename='filial-veiculos')
-utilitarios_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
-utilitarios_router.register(r'utilitarios', UtilitarioViewSet, basename='filial-utilitarios')
-imobiliarios_router = routers.NestedSimpleRouter(filiais_router, r'filiais', lookup='filial')
-imobiliarios_router.register(r'imobiliarios', ImobiliarioViewSet, basename='filial-imobiliarios')
+utilitarios_router = routers.NestedSimpleRouter(filiais_router,
+                                                r'filiais',
+                                                lookup='filial'
+                                                )
+utilitarios_router.register(r'utilitarios',
+                            UtilitarioViewSet,
+                            basename='filial-utilitarios'
+                            )
+imobiliarios_router = routers.NestedSimpleRouter(filiais_router,
+                                                 r'filiais',
+                                                 lookup='filial'
+                                                 )
+imobiliarios_router.register(r'imobiliarios',
+                             ImobiliarioViewSet,
+                             basename='filial-imobiliarios'
+                             )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -52,7 +72,7 @@ urlpatterns = [
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(), name='redoc'),
-    path('api/', include(router.urls)), 
+    path('api/', include(router.urls)),
     path('api/', include(filiais_router.urls)),
     path('api/', include(gestores_router.urls)),
     path('api/', include(funcionarios_router.urls)),
@@ -60,8 +80,8 @@ urlpatterns = [
     path('api/', include(utilitarios_router.urls)),
     path('api/', include(imobiliarios_router.urls)),
     path(
-        'api/empresas/<int:empresa_pk>/filiais/<int:filial_pk>/patrimonios/', 
-        PatrimonioDaFilialListView.as_view(), 
+        'api/empresas/<int:empresa_pk>/filiais/<int:filial_pk>/patrimonios/',
+        PatrimonioDaFilialListView.as_view(),
         name='filial-patrimonios-list'
     ),
 ]
