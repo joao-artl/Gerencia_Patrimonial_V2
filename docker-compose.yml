@@ -55,7 +55,6 @@ services:
       - API_HOST=web
       - PYTHONUNBUFFERED=1
 
-
   lint:
     build: .
     profiles:
@@ -63,8 +62,8 @@ services:
     volumes:
       - ./src:/app
       - ./tests:/app/tests
-    # Aumenta o limite de caracteres para acomodar linhas longas geradas automaticamente pelo Django
-    command: flake8 . --max-line-length=95
+    # Aumenta o limite de caracteres e exclui a pasta de migrations
+    command: flake8 . --max-line-length=95 --exclude=migrations
 
 volumes:
   postgres_data:
