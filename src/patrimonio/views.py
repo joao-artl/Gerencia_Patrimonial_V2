@@ -5,20 +5,27 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from usuarios.permissions import IsEmployeeOfThisBranchOrManager
 from .models import Imobiliario, Utilitario, Veiculo
-from .serializers import ImobiliarioSerializer, UtilitarioSerializer, VeiculoSerializer, PatrimonioConsolidadoSerializer
+from .serializers import ImobiliarioSerializer, UtilitarioSerializer
+from .serializers import VeiculoSerializer, PatrimonioConsolidadoSerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
 
 @extend_schema(
     parameters=[
-        OpenApiParameter(name='empresa_pk', description='ID da Empresa', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
-        OpenApiParameter(name='filial_pk', description='ID da Filial', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+        OpenApiParameter(name='empresa_pk',
+                         description='ID da Empresa',
+                         required=True,
+                         type=OpenApiTypes.INT,
+                         location=OpenApiParameter.PATH),
+        OpenApiParameter(name='filial_pk',
+                         description='ID da Filial',
+                         required=True,
+                         type=OpenApiTypes.INT,
+                         location=OpenApiParameter.PATH),
     ]
 )
-
 class BasePatrimonioViewSet(viewsets.ModelViewSet):
-
     permission_classes = [IsAuthenticated, IsEmployeeOfThisBranchOrManager]
     filter_backends = [SearchFilter]
 
@@ -28,12 +35,14 @@ class BasePatrimonioViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(filial_associada_id=self.kwargs['filial_pk'])
 
+
 class VeiculoViewSet(BasePatrimonioViewSet):
 
     queryset = Veiculo.objects.all()
     serializer_class = VeiculoSerializer
 
     search_fields = ['nome', 'modelo', 'fabricante', 'cor']
+
 
 class UtilitarioViewSet(BasePatrimonioViewSet):
 
@@ -42,20 +51,22 @@ class UtilitarioViewSet(BasePatrimonioViewSet):
 
     search_fields = ['nome', 'descricao', 'funcao']
 
+
 class ImobiliarioViewSet(BasePatrimonioViewSet):
 
     queryset = Imobiliario.objects.all()
     serializer_class = ImobiliarioSerializer
-    
+
     search_fields = [
-        'nome', 
-        'tipo', 
-        'endereco__logradouro', 
-        'endereco__bairro', 
+        'nome',
+        'tipo',
+        'endereco__logradouro',
+        'endereco__bairro',
         'endereco__cidade',
         'endereco__estado',
         'endereco__cep'
     ]
+
 
 class PatrimonioDaFilialListView(APIView):
     permission_classes = [IsAuthenticated, IsEmployeeOfThisBranchOrManager]

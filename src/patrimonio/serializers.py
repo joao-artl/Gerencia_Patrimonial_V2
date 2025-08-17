@@ -1,17 +1,20 @@
 from rest_framework import serializers
 from .models import Imobiliario, Utilitario, Veiculo
-from empresa_filial.serializers import EnderecoSerializer 
+from empresa_filial.serializers import EnderecoSerializer
 from empresa_filial.models import Endereco
+
 
 class VeiculoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Veiculo
         exclude = ('filial_associada',)
 
+
 class UtilitarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Utilitario
         exclude = ('filial_associada',)
+
 
 class ImobiliarioSerializer(serializers.ModelSerializer):
     endereco = EnderecoSerializer()
@@ -34,9 +37,10 @@ class ImobiliarioSerializer(serializers.ModelSerializer):
             for attr, value in endereco_data.items():
                 setattr(endereco_instance, attr, value)
             endereco_instance.save()
-            
+
         return super().update(instance, validated_data)
-    
+
+
 class PatrimonioPolimorficoSerializer(serializers.ModelSerializer):
     tipo_patrimonio = serializers.SerializerMethodField()
 
@@ -54,20 +58,24 @@ class PatrimonioPolimorficoSerializer(serializers.ModelSerializer):
             data['detalhes'] = UtilitarioSerializer(instance).data
         elif isinstance(instance, Imobiliario):
             data['detalhes'] = ImobiliarioSerializer(instance).data
-            
+
         return data
+
 
 class VeiculoPolimorficoSerializer(PatrimonioPolimorficoSerializer):
     class Meta(PatrimonioPolimorficoSerializer.Meta):
         model = Veiculo
 
+
 class UtilitarioPolimorficoSerializer(PatrimonioPolimorficoSerializer):
     class Meta(PatrimonioPolimorficoSerializer.Meta):
         model = Utilitario
 
+
 class ImobiliarioPolimorficoSerializer(PatrimonioPolimorficoSerializer):
     class Meta(PatrimonioPolimorficoSerializer.Meta):
         model = Imobiliario
+
 
 class PatrimonioConsolidadoSerializer(serializers.Serializer):
     """
