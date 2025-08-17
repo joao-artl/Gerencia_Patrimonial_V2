@@ -5,17 +5,28 @@ from django.contrib.auth.hashers import make_password
 
 
 class Endereco(models.Model):
-    cep = models.CharField(max_length=8, verbose_name="CEP")
-    estado = models.CharField(max_length=2, verbose_name="Estado")
-    cidade = models.CharField(max_length=30, verbose_name="Cidade")
-    bairro = models.CharField(max_length=20, verbose_name="Bairro")
-    logradouro = models.CharField(max_length=120, verbose_name="Logradouro")
-    complemento = models.CharField(max_length=60, blank=True, null=True, verbose_name="Complemento (Opcional)")
-    numero = models.CharField(max_length=10, blank=True, null=True, verbose_name="Número (Opcional)")
+    cep = models.CharField(max_length=8,
+                           verbose_name="CEP")
+    estado = models.CharField(max_length=2,
+                              verbose_name="Estado")
+    cidade = models.CharField(max_length=30,
+                              verbose_name="Cidade")
+    bairro = models.CharField(max_length=20,
+                              verbose_name="Bairro")
+    logradouro = models.CharField(max_length=120,
+                                  verbose_name="Logradouro")
+    complemento = models.CharField(max_length=60,
+                                   blank=True,
+                                   null=True,
+                                   verbose_name="Complemento (Opcional)")
+    numero = models.CharField(max_length=10,
+                              blank=True,
+                              null=True,
+                              verbose_name="Número (Opcional)")
 
     class Meta:
-        verbose_name="Endereço"
-        verbose_name_plural="Endereços"
+        verbose_name = "Endereço"
+        verbose_name_plural = "Endereços"
 
     def __str__(self):
         primeira_parte_elementos = []
@@ -31,14 +42,27 @@ class Endereco(models.Model):
         endereco_completo_elementos.append(self.cep)
         return ", ".join(filter(None, endereco_completo_elementos))
 
+
 class Empresa(models.Model):
-    cnpj = models.CharField(max_length=14, unique=True, verbose_name="CNPJ")
-    nome = models.CharField(max_length=255, verbose_name="Nome")
-    password = models.CharField(max_length=128, verbose_name="Senha")
-    email = models.EmailField(max_length=255, unique=True, verbose_name="E-mail")
-    telefone = models.CharField(max_length=11, unique=True, verbose_name="Telefone")
-    endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
-    gestores = models.ManyToManyField('usuarios.Usuario', through='Gerencia', related_name='empresa_administrada')
+    cnpj = models.CharField(max_length=14,
+                            unique=True,
+                            verbose_name="CNPJ")
+    nome = models.CharField(max_length=255,
+                            verbose_name="Nome")
+    password = models.CharField(max_length=128,
+                                verbose_name="Senha")
+    email = models.EmailField(max_length=255,
+                              unique=True,
+                              verbose_name="E-mail")
+    telefone = models.CharField(max_length=11,
+                                unique=True,
+                                verbose_name="Telefone")
+    endereco = models.OneToOneField(Endereco,
+                                    on_delete=models.CASCADE,
+                                    verbose_name="Endereço")
+    gestores = models.ManyToManyField('usuarios.Usuario',
+                                      through='Gerencia',
+                                      related_name='empresa_administrada')
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
@@ -46,12 +70,12 @@ class Empresa(models.Model):
     def clean(self):
         if self.telefone:
             filial_telefone = Filial.objects.filter(telefone=self.telefone).exists()
-            
+
             if filial_telefone:
                 raise ValidationError({
                     'telefone': 'Este telefone já está em uso por uma Filial.'
                 })
-    
+
         if self.cnpj:
             filial_cnpj = Filial.objects.filter(cnpj=self.cnpj).exists()
 
@@ -59,40 +83,40 @@ class Empresa(models.Model):
                 raise ValidationError({
                     'cnpj': 'Este CNPJ já está em uso por uma Filial.'
                 })
-    
+
         if self.email:
             usuario = apps.get_model('usuarios', 'Usuario')
             usuario_email = usuario.objects.filter(email=self.email).exists()
             filial_email = Filial.objects.filter(email=self.email).exists()
-            
+
             if usuario_email or filial_email:
                 raise ValidationError({
                     'email': 'Este email já está em uso por um Usuário ou Filial.'
                 })
-            
+
         if self.endereco:
             imobiliario = apps.get_model('patrimonio', 'Imobiliario')
             filial_endereco = Filial.objects.filter(endereco=self.endereco).exists()
             imobiliario_endereco = imobiliario.objects.filter(endereco=self.endereco).exists()
-            
+
             if filial_endereco or imobiliario_endereco:
                 raise ValidationError({
                     'endereco': 'Este endereço já está em uso por uma Filial ou Imobiliário.'
                 })
-            
+
         super().clean()
 
     class Meta:
-        verbose_name="Empresa"
-        verbose_name_plural="Empresas"
-    
+        verbose_name = "Empresa"
+        verbose_name_plural = "Empresas"
+
     def __str__(self):
         return self.nome
-    
+
 
 class Gerencia(models.Model):
     usuario = models.ForeignKey('usuarios.Usuario', on_delete=models.CASCADE)
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE) 
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('usuario', 'empresa')
@@ -100,45 +124,57 @@ class Gerencia(models.Model):
     def __str__(self):
         return f"{self.usuario.nome} na empresa {self.empresa.nome}"
 
+
 class Filial(models.Model):
-    cnpj = models.CharField(max_length=14, unique=True, verbose_name="CNPJ")
-    nome = models.CharField(max_length=255, verbose_name="Nome")
-    password = models.CharField(max_length=128, verbose_name="Senha")
-    email = models.EmailField(max_length=255, unique=True, verbose_name="E-mail")
-    telefone = models.CharField(max_length=11, unique=True, verbose_name="Telefone")
-    endereco = models.OneToOneField(Endereco, on_delete=models.CASCADE, verbose_name="Endereço")
-    empresa_matriz = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='filiais')
+    cnpj = models.CharField(max_length=14,
+                            unique=True,
+                            verbose_name="CNPJ")
+    nome = models.CharField(max_length=255,
+                            verbose_name="Nome")
+    password = models.CharField(max_length=128,
+                                verbose_name="Senha")
+    email = models.EmailField(max_length=255,
+                              unique=True, verbose_name="E-mail")
+    telefone = models.CharField(max_length=11,
+                                unique=True,
+                                verbose_name="Telefone")
+    endereco = models.OneToOneField(Endereco,
+                                    on_delete=models.CASCADE,
+                                    verbose_name="Endereço")
+    empresa_matriz = models.ForeignKey(Empresa,
+                                       on_delete=models.CASCADE,
+                                       related_name='filiais')
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)
-        
+
     def clean(self):
         if self.telefone:
             empresa_telefone = Empresa.objects.filter(telefone=self.telefone).exists()
-            
+
             if empresa_telefone:
                 raise ValidationError({
                     'telefone': 'Este telefone já está em uso por uma Empresa.'
                 })
-    
+
         if self.cnpj:
             empresa_cnpj = Empresa.objects.filter(cnpj=self.cnpj).exists()
-            
+
             if empresa_cnpj:
                 raise ValidationError({
                     'cnpj': 'Este CNPJ já está em uso por uma Empresa.'
                 })
-    
+
         if self.email:
             usuario = apps.get_model('usuarios', 'Usuario')
             usuario_email = usuario.objects.filter(email=self.email).exists()
             empresa_email = Empresa.objects.filter(email=self.email).exists()
-            
+
             if usuario_email or empresa_email:
                 raise ValidationError({
                     'email': 'Este email já está em uso por um Usuário ou Empresa.'
                 })
-            
+
         if self.endereco:
             imobiliario = apps.get_model('patrimonio', 'Imobiliario')
             empresa_endereco = Empresa.objects.filter(endereco=self.endereco).exists()
@@ -148,12 +184,16 @@ class Filial(models.Model):
                 raise ValidationError({
                     'endereco': 'Este endereço já está em uso por uma Empresa ou Imobiliário.'
                 })
-            
+
         super().clean()
 
     class Meta:
-        verbose_name="Filial"
-        verbose_name_plural="Filiais"
-    
+        verbose_name = "Filial"
+        verbose_name_plural = "Filiais"
+
     def __str__(self):
-        return f"Filial: {self.nome}, CNPJ: {self.cnpj}, Empresa Matriz: {self.empresa_matriz.nome}"
+        return (
+            f"Filial: {self.nome}, "
+            f"CNPJ: {self.cnpj}, "
+            f"Empresa Matriz: {self.empresa_matriz.nome}"
+        )

@@ -4,10 +4,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.contrib.auth.hashers import check_password
 from django.db.models import Q
-from .models import Empresa, Filial, Gerencia 
-from .serializers import EmpresaSerializer, FilialSerializer, JoinEmpresaSerializer, JoinByEmailSerializer 
+from .models import Empresa, Filial, Gerencia
+from .serializers import EmpresaSerializer, FilialSerializer
+from .serializers import JoinEmpresaSerializer, JoinByEmailSerializer
 from patrimonio.models import Veiculo, Utilitario, Imobiliario
-from patrimonio.serializers import VeiculoSerializer, UtilitarioSerializer, ImobiliarioSerializer
+from patrimonio.serializers import VeiculoSerializer, UtilitarioSerializer
+from patrimonio.serializers import ImobiliarioSerializer
 from usuarios.permissions import IsGestor, IsManagerOfParentCompany
 from usuarios.models import Usuario
 from usuarios.serializers import UsuarioSerializer
@@ -34,7 +36,7 @@ class EmpresaViewSet(viewsets.ModelViewSet):
 
         serializer = JoinEmpresaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        
+
         senha_submetida = serializer.validated_data['senha_da_empresa']
 
         if not check_password(senha_submetida, empresa.password):
@@ -52,16 +54,20 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         Gerencia.objects.create(empresa=empresa, usuario=gestor)
 
         return Response(
-            {'message': f'Você foi adicionado com sucesso como gestor da empresa {empresa.nome}.'},
+            {'message':
+             f'Você foi adicionado com sucesso como gestor da empresa {empresa.nome}.'},
             status=status.HTTP_200_OK
         )
 
-    @action(detail=True, methods=['get'], url_path='patrimonios', permission_classes=[IsAuthenticated, IsManagerOfParentCompany])
+    @action(detail=True,
+            methods=['get'],
+            url_path='patrimonios',
+            permission_classes=[IsAuthenticated, IsManagerOfParentCompany])
     def listar_todos_patrimonios(self, request, pk=None):
         empresa = self.get_object()
         filiais_da_empresa = empresa.filiais.all()
         resposta_consolidada = {}
-        
+
         search_term = request.query_params.get('search', None)
 
         for filial in filiais_da_empresa:
@@ -93,8 +99,11 @@ class EmpresaViewSet(viewsets.ModelViewSet):
             }
 
         return Response(resposta_consolidada)
-        
-    @action(detail=True, methods=['get'], url_path='funcionarios', permission_classes=[IsAuthenticated, IsManagerOfParentCompany])
+
+    @action(detail=True,
+            methods=['get'],
+            url_path='funcionarios',
+            permission_classes=[IsAuthenticated, IsManagerOfParentCompany])
     def listar_todos_funcionarios(self, request, pk=None):
         empresa = self.get_object()
         funcionarios_da_empresa = Usuario.objects.filter(
@@ -103,9 +112,11 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         )
         serializer = UsuarioSerializer(funcionarios_da_empresa, many=True)
         return Response(serializer.data)
-    
 
-    @action(detail=False, methods=['post'], url_path='join-by-email', permission_classes=[IsAuthenticated, IsGestor])
+    @action(detail=False,
+            methods=['post'],
+            url_path='join-by-email',
+            permission_classes=[IsAuthenticated, IsGestor])
     def join_by_email(self, request):
 
         serializer = JoinByEmailSerializer(data=request.data)
@@ -118,28 +129,43 @@ class EmpresaViewSet(viewsets.ModelViewSet):
         try:
             empresa = Empresa.objects.get(email=email_empresa)
         except Empresa.DoesNotExist:
-            return Response({'error': 'Nenhuma empresa encontrada com este email.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error':
+                             'Nenhuma empresa encontrada com este email.'},
+                            status=status.HTTP_404_NOT_FOUND)
 
         if not check_password(senha_submetida, empresa.password):
-            return Response({'error': 'A senha da empresa está incorreta.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error':
+                             'A senha da empresa está incorreta.'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         if Gerencia.objects.filter(empresa=empresa, usuario=gestor).exists():
-            return Response({'message': 'Você já é um gestor desta empresa.'}, status=status.HTTP_200_OK)
+            return Response({'message':
+                             'Você já é um gestor desta empresa.'},
+                            status=status.HTTP_200_OK)
 
         Gerencia.objects.create(empresa=empresa, usuario=gestor)
 
         return Response(
-            {'message': f'Você foi adicionado com sucesso como gestor da empresa {empresa.nome}.'},
+            {'message':
+             f'Você foi adicionado com sucesso como gestor da empresa {empresa.nome}.'},
             status=status.HTTP_200_OK
         )
 
+
 @extend_schema(
     parameters=[
-        OpenApiParameter(name='empresa_pk', description='ID da Empresa mãe', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
-        OpenApiParameter(name='pk', description='ID da Filial', required=True, type=OpenApiTypes.INT, location=OpenApiParameter.PATH),
+        OpenApiParameter(name='empresa_pk',
+                         description='ID da Empresa mãe',
+                         required=True,
+                         type=OpenApiTypes.INT,
+                         location=OpenApiParameter.PATH),
+        OpenApiParameter(name='pk',
+                         description='ID da Filial',
+                         required=True,
+                         type=OpenApiTypes.INT,
+                         location=OpenApiParameter.PATH),
     ]
 )
-
 class FilialViewSet(viewsets.ModelViewSet):
     serializer_class = FilialSerializer
     permission_classes = [IsAuthenticated, IsManagerOfParentCompany]
