@@ -3,8 +3,9 @@ from django.contrib.auth.hashers import check_password
 from .models import Usuario
 from empresa_filial.models import Gerencia, Filial, Empresa
 
+
 class UsuarioSerializer(serializers.ModelSerializer):
-    
+
     filial_associada = serializers.PrimaryKeyRelatedField(
         queryset=Filial.objects.all(),
         required=False,
@@ -19,14 +20,21 @@ class UsuarioSerializer(serializers.ModelSerializer):
     )
 
     senha = serializers.CharField(
-        source='password', 
-        write_only=True, 
+        source='password',
+        write_only=True,
         style={'input_type': 'password'}
     )
 
     class Meta:
         model = Usuario
-        fields = ['id', 'cpf', 'email', 'nome', 'senha', 'tipo_usuario', 'filial_associada', 'senha_da_filial']
+        fields = ['id',
+                  'cpf',
+                  'email',
+                  'nome',
+                  'senha',
+                  'tipo_usuario',
+                  'filial_associada',
+                  'senha_da_filial']
 
     def validate(self, data):
         tipo_usuario = data.get('tipo_usuario')
@@ -34,17 +42,38 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
         if tipo_usuario == 'FUNCIONARIO':
             if not filial_associada_obj:
-                raise serializers.ValidationError({"filial_associada": "Para criar um 'Funcionário', a filial associada é obrigatória."})
+                raise serializers.ValidationError(
+                    {
+                        "filial_associada": (
+                            "Para criar um 'Funcionário', "
+                            "a filial associada é obrigatória."
+                        )
+                    }
+                )
 
             senha_filial_submetida = data.get('senha_da_filial')
             if not senha_filial_submetida:
-                raise serializers.ValidationError({"senha_da_filial": "A senha da filial é obrigatória para cadastrar um funcionário."})
+                raise serializers.ValidationError({
+                    "senha_da_filial": (
+                        "A senha da filial é obrigatória para cadastrar um funcionário."
+                    )
+                })
 
             if not check_password(senha_filial_submetida, filial_associada_obj.password):
-                raise serializers.ValidationError({"senha_da_filial": "A senha da filial está incorreta."})
+                raise serializers.ValidationError({
+                    "senha_da_filial": (
+                        "A senha da filial está incorreta."
+                    )
+                })
 
         if tipo_usuario == 'GESTOR' and filial_associada_obj:
-            raise serializers.ValidationError({"filial_associada": "Para o tipo 'Gestor', a filial associada deve ser nula."})
+            raise serializers.ValidationError(
+                {
+                    "filial_associada": (
+                        "Para o tipo 'Gestor', a filial associada deve ser nula."
+                    )
+                }
+            )
 
         data.pop('senha_da_filial', None)
         return data
@@ -56,8 +85,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
         if 'password' in validated_data:
             password = validated_data.pop('password')
             instance.set_password(password)
-        
+
         return super().update(instance, validated_data)
+
 
 class GerenciaSerializer(serializers.ModelSerializer):
 
@@ -78,15 +108,17 @@ class GerenciaSerializer(serializers.ModelSerializer):
             empresa = Empresa.objects.get(pk=empresa_pk)
         except Empresa.DoesNotExist:
             raise serializers.ValidationError("A empresa especificada não existe.")
-        
+
         senha_empresa_submetida = data.get('senha_da_empresa')
         if not check_password(senha_empresa_submetida, empresa.password):
-            raise serializers.ValidationError({"senha_da_empresa": "A senha da empresa está incorreta."})
-        
+            raise serializers.ValidationError({"senha_da_empresa":
+                                               "A senha da empresa está incorreta."})
+
         try:
             Usuario.objects.get(email=data['usuario_email'], tipo_usuario='GESTOR')
         except Usuario.DoesNotExist:
-            raise serializers.ValidationError({"usuario_email": "Nenhum gestor encontrado com este email."})
+            raise serializers.ValidationError({"usuario_email":
+                                               "Nenhum gestor encontrado com este email."})
 
         data.pop('senha_da_empresa')
         return data
