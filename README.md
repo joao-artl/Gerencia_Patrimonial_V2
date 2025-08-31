@@ -4,24 +4,56 @@
 
 **Gerência Patrimonial V2** é uma aplicação Full-Stack completa para gestão de patrimônio empresarial. A plataforma permite que gestores se cadastrem, criem suas empresas, filiais e contratem funcionários.
 
-Este projeto foi desenvolvido utilizando as melhores práticas de desenvolvimento, desde a conteinerização com Docker até a integração contínua
+Este projeto foi desenvolvido utilizando as melhores práticas de desenvolvimento, desde a conteinerização com Docker até a integração contínua.
 
-[Link para a aplicação](https://gerencia-patrimonial.vercel.app/)
-
-[Link para documentação da API](https://gerencia-patrimonial-api.onrender.com/api/schema/swagger-ui/)
-
-[Link para documentação dos artefatos](https://joao-artl.github.io/Gerencia_Patrimonial_V2/)
-
-[Link para repositório do Front-End](https://github.com/joao-artl/Gerencia_Patrimonial_V2_Front_End)
+### 🔗 Links Úteis
+| Recurso | Link |
+| :--- | :--- |
+| **Aplicação** | [gerencia-patrimonial.vercel.app](https://gerencia-patrimonial.vercel.app/) |
+| **Documentação da API** | [gerencia-patrimonial-api.onrender.com](https://gerencia-patrimonial-api.onrender.com/api/schema/swagger-ui/) |
+| **Documentação (Artefatos)** | [joao-artl.github.io/Gerencia_Patrimonial_V2/](https://joao-artl.github.io/Gerencia_Patrimonial_V2/) |
+| **Repositório (Front-End)** | [github.com/joao-artl/Gerencia_Patrimonial_V2_Front_End](https://github.com/joao-artl/Gerencia_Patrimonial_V2_Front_End) |
 
 ## ✨ Funcionalidades Principais
 
-* **Autenticação Segura:** Sistema de login e cadastro com tokens JWT (Access & Refresh Tokens).
-* **Gerenciamento de Entidades:** CRUD completo para Empresas, Filiais e Funcionários.
-* **Gestão de Patrimônio:** Cadastro e gerenciamento de múltiplos tipos de patrimônios (Imóveis, Veículos, Utilitários) associados a cada filial.
-* **Dashboards Dinâmicos:** Visões gerais para gestores com dados consolidados de toda a empresa.
-* **Busca e Filtros:** Funcionalidades de busca e filtro em todas as listagens principais.
-* **Documentação de API:** Documentação interativa gerada automaticamente com Swagger/OpenAPI.
+<table>
+  <tr>
+    <td align="center">
+      <strong>Dashboards Dinâmicos</strong><br>
+      <img src="./assets/dashboardEmpresa.png" width="400">
+      <p>Visões gerais para gestores com dados consolidados de toda a empresa.</p>
+    </td>
+    <td align="center">
+      <strong>Autenticação Segura</strong><br>
+      <img src="./assets/telaLogin.png" width="400">
+      <p>Sistema de login e cadastro com tokens JWT (Access & Refresh Tokens).</p>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <strong>Gerenciamento de Entidades</strong><br>
+      <img src="./assets/telaCadastroEmpresa.png" width="400">
+      <p>CRUD completo para Empresas, Filiais e Funcionários.</p>
+    </td>
+    <td align="center">
+      <strong>Gestão de Patrimônio</strong><br>
+      <img src="./assets/telaCadastroImobiliario.png" width="400">
+      <p>Cadastro e gerenciamento de múltiplos tipos de patrimônios.</p>
+    </td>
+  </tr>
+    <tr>
+    <td align="center">
+      <strong>Busca e Filtros</strong><br>
+      <img src="./assets/telaBuscaGlobal.png" width="400">
+      <p>Funcionalidades de busca e filtro em todas as listagens.</p>
+    </td>
+    <td align="center">
+      <strong>Documentação de API</strong><br>
+      <img src="./assets/docAPI.png" width="400">
+      <p>Documentação interativa gerada automaticamente com Swagger/OpenAPI.</p>
+    </td>
+  </tr>
+</table>
 
 ## 🛠️ Tecnologias Utilizadas
 
